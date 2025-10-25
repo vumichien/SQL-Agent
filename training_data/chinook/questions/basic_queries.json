@@ -1,0 +1,82 @@
+[
+  {
+    "question": "How many customers are there?",
+    "sql": "SELECT COUNT(*) FROM customers"
+  },
+  {
+    "question": "List first 10 customers",
+    "sql": "SELECT * FROM customers LIMIT 10"
+  },
+  {
+    "question": "How many customers are from USA?",
+    "sql": "SELECT COUNT(*) FROM customers WHERE Country = 'USA'"
+  },
+  {
+    "question": "Show all genres",
+    "sql": "SELECT * FROM genres ORDER BY Name"
+  },
+  {
+    "question": "How many tracks are there?",
+    "sql": "SELECT COUNT(*) FROM tracks"
+  },
+  {
+    "question": "List all artists",
+    "sql": "SELECT * FROM artists ORDER BY Name"
+  },
+  {
+    "question": "Get all albums",
+    "sql": "SELECT * FROM albums ORDER BY Title"
+  },
+  {
+    "question": "Show all employees",
+    "sql": "SELECT FirstName, LastName, Title FROM employees ORDER BY LastName"
+  },
+  {
+    "question": "How many invoices are there?",
+    "sql": "SELECT COUNT(*) FROM invoices"
+  },
+  {
+    "question": "List all playlists",
+    "sql": "SELECT * FROM playlists ORDER BY Name"
+  },
+  {
+    "question": "Show all media types",
+    "sql": "SELECT * FROM media_types ORDER BY Name"
+  },
+  {
+    "question": "Get customers from Brazil",
+    "sql": "SELECT * FROM customers WHERE Country = 'Brazil'"
+  },
+  {
+    "question": "Show customers in Canada",
+    "sql": "SELECT * FROM customers WHERE Country = 'Canada'"
+  },
+  {
+    "question": "List tracks with price 0.99",
+    "sql": "SELECT * FROM tracks WHERE UnitPrice = 0.99"
+  },
+  {
+    "question": "Show expensive tracks",
+    "sql": "SELECT * FROM tracks WHERE UnitPrice > 0.99 ORDER BY UnitPrice DESC"
+  },
+  {
+    "question": "Count artists",
+    "sql": "SELECT COUNT(*) FROM artists"
+  },
+  {
+    "question": "Count albums",
+    "sql": "SELECT COUNT(*) FROM albums"
+  },
+  {
+    "question": "How many genres are there?",
+    "sql": "SELECT COUNT(*) FROM genres"
+  },
+  {
+    "question": "List customers from France",
+    "sql": "SELECT * FROM customers WHERE Country = 'France'"
+  },
+  {
+    "question": "Show all Rock tracks",
+    "sql": "SELECT t.* FROM tracks t JOIN genres g ON t.GenreId = g.GenreId WHERE g.Name = 'Rock'"
+  }
+]

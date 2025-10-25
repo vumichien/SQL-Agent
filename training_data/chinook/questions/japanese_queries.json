@@ -1,0 +1,82 @@
+[
+  {
+    "question": "顧客は何人いますか？",
+    "sql": "SELECT COUNT(*) FROM customers"
+  },
+  {
+    "question": "最初の10人の顧客をリストしてください",
+    "sql": "SELECT * FROM customers LIMIT 10"
+  },
+  {
+    "question": "すべての音楽ジャンルを表示",
+    "sql": "SELECT * FROM genres ORDER BY Name"
+  },
+  {
+    "question": "総売上はいくらですか？",
+    "sql": "SELECT SUM(Total) as TotalRevenue FROM invoices"
+  },
+  {
+    "question": "国別の売上",
+    "sql": "SELECT BillingCountry, SUM(Total) as Revenue FROM invoices GROUP BY BillingCountry ORDER BY Revenue DESC"
+  },
+  {
+    "question": "売上トップ10の顧客",
+    "sql": "SELECT c.FirstName, c.LastName, SUM(i.Total) as TotalSpent FROM customers c JOIN invoices i ON c.CustomerId = i.CustomerId GROUP BY c.CustomerId, c.FirstName, c.LastName ORDER BY TotalSpent DESC LIMIT 10"
+  },
+  {
+    "question": "アルバムとアーティストをリストしてください",
+    "sql": "SELECT al.Title as Album, ar.Name as Artist FROM albums al JOIN artists ar ON al.ArtistId = ar.ArtistId ORDER BY ar.Name"
+  },
+  {
+    "question": "最も売れている音楽ジャンルは？",
+    "sql": "SELECT g.Name, COUNT(il.InvoiceLineId) as TimesSold FROM genres g JOIN tracks t ON g.GenreId = t.GenreId JOIN invoice_items il ON t.TrackId = il.TrackId GROUP BY g.Name ORDER BY TimesSold DESC LIMIT 1"
+  },
+  {
+    "question": "従業員の一覧",
+    "sql": "SELECT FirstName, LastName, Title FROM employees ORDER BY LastName"
+  },
+  {
+    "question": "ロックジャンルのトラック数",
+    "sql": "SELECT COUNT(*) FROM tracks t JOIN genres g ON t.GenreId = g.GenreId WHERE g.Name = 'Rock'"
+  },
+  {
+    "question": "2009年の月別売上",
+    "sql": "SELECT strftime('%Y-%m', InvoiceDate) as Month, SUM(Total) as Revenue FROM invoices WHERE strftime('%Y', InvoiceDate) = '2009' GROUP BY Month ORDER BY Month"
+  },
+  {
+    "question": "アーティスト別のアルバム数",
+    "sql": "SELECT ar.Name as Artist, COUNT(al.AlbumId) as AlbumCount FROM artists ar LEFT JOIN albums al ON ar.ArtistId = al.ArtistId GROUP BY ar.ArtistId, ar.Name ORDER BY AlbumCount DESC"
+  },
+  {
+    "question": "プレイリストの一覧",
+    "sql": "SELECT * FROM playlists ORDER BY Name"
+  },
+  {
+    "question": "平均請求額",
+    "sql": "SELECT AVG(Total) as AverageInvoice FROM invoices"
+  },
+  {
+    "question": "国別の顧客数",
+    "sql": "SELECT Country, COUNT(*) as CustomerCount FROM customers GROUP BY Country ORDER BY CustomerCount DESC"
+  },
+  {
+    "question": "トラックとアルバムとアーティストを表示",
+    "sql": "SELECT t.Name as Track, al.Title as Album, ar.Name as Artist FROM tracks t JOIN albums al ON t.AlbumId = al.AlbumId JOIN artists ar ON al.ArtistId = ar.ArtistId"
+  },
+  {
+    "question": "サポート担当者別の顧客数",
+    "sql": "SELECT e.FirstName || ' ' || e.LastName as SupportRep, COUNT(c.CustomerId) as CustomerCount FROM employees e LEFT JOIN customers c ON e.EmployeeId = c.SupportRepId GROUP BY e.EmployeeId ORDER BY CustomerCount DESC"
+  },
+  {
+    "question": "最高売上のアーティストトップ5",
+    "sql": "SELECT ar.Name as Artist, SUM(il.UnitPrice * il.Quantity) as Revenue FROM artists ar JOIN albums al ON ar.ArtistId = al.ArtistId JOIN tracks t ON al.AlbumId = t.AlbumId JOIN invoice_items il ON t.TrackId = il.TrackId GROUP BY ar.Name ORDER BY Revenue DESC LIMIT 5"
+  },
+  {
+    "question": "メディアタイプの一覧",
+    "sql": "SELECT * FROM media_types ORDER BY Name"
+  },
+  {
+    "question": "アメリカの顧客数",
+    "sql": "SELECT COUNT(*) FROM customers WHERE Country = 'USA'"
+  }
+]

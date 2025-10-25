@@ -1,0 +1,62 @@
+[
+  {
+    "question": "What is the total revenue?",
+    "sql": "SELECT SUM(Total) as TotalRevenue FROM invoices"
+  },
+  {
+    "question": "Revenue by country",
+    "sql": "SELECT BillingCountry, SUM(Total) as Revenue FROM invoices GROUP BY BillingCountry ORDER BY Revenue DESC"
+  },
+  {
+    "question": "Top 10 customers by spending",
+    "sql": "SELECT c.FirstName, c.LastName, SUM(i.Total) as TotalSpent FROM customers c JOIN invoices i ON c.CustomerId = i.CustomerId GROUP BY c.CustomerId, c.FirstName, c.LastName ORDER BY TotalSpent DESC LIMIT 10"
+  },
+  {
+    "question": "Average invoice total",
+    "sql": "SELECT AVG(Total) as AverageInvoice FROM invoices"
+  },
+  {
+    "question": "Most popular genre by sales",
+    "sql": "SELECT g.Name, COUNT(il.InvoiceLineId) as TimesSold FROM genres g JOIN tracks t ON g.GenreId = t.GenreId JOIN invoice_items il ON t.TrackId = il.TrackId GROUP BY g.Name ORDER BY TimesSold DESC LIMIT 1"
+  },
+  {
+    "question": "Count customers by country",
+    "sql": "SELECT Country, COUNT(*) as CustomerCount FROM customers GROUP BY Country ORDER BY CustomerCount DESC"
+  },
+  {
+    "question": "Total tracks by genre",
+    "sql": "SELECT g.Name as Genre, COUNT(t.TrackId) as TrackCount FROM genres g LEFT JOIN tracks t ON g.GenreId = t.GenreId GROUP BY g.GenreId, g.Name ORDER BY TrackCount DESC"
+  },
+  {
+    "question": "Albums per artist",
+    "sql": "SELECT ar.Name as Artist, COUNT(al.AlbumId) as AlbumCount FROM artists ar LEFT JOIN albums al ON ar.ArtistId = al.ArtistId GROUP BY ar.ArtistId, ar.Name ORDER BY AlbumCount DESC"
+  },
+  {
+    "question": "Top 5 selling artists",
+    "sql": "SELECT ar.Name as Artist, COUNT(il.InvoiceLineId) as TracksSold FROM artists ar JOIN albums al ON ar.ArtistId = al.ArtistId JOIN tracks t ON al.AlbumId = t.AlbumId JOIN invoice_items il ON t.TrackId = il.TrackId GROUP BY ar.ArtistId, ar.Name ORDER BY TracksSold DESC LIMIT 5"
+  },
+  {
+    "question": "Monthly revenue for 2009",
+    "sql": "SELECT strftime('%Y-%m', InvoiceDate) as Month, SUM(Total) as Revenue FROM invoices WHERE strftime('%Y', InvoiceDate) = '2009' GROUP BY Month ORDER BY Month"
+  },
+  {
+    "question": "Average track duration in minutes",
+    "sql": "SELECT AVG(Milliseconds / 60000.0) as AvgMinutes FROM tracks"
+  },
+  {
+    "question": "Number of tracks per album",
+    "sql": "SELECT al.Title, COUNT(t.TrackId) as TrackCount FROM albums al LEFT JOIN tracks t ON al.AlbumId = t.AlbumId GROUP BY al.AlbumId, al.Title ORDER BY TrackCount DESC"
+  },
+  {
+    "question": "Total invoice count by city",
+    "sql": "SELECT BillingCity, COUNT(*) as InvoiceCount FROM invoices GROUP BY BillingCity ORDER BY InvoiceCount DESC"
+  },
+  {
+    "question": "Customers per support representative",
+    "sql": "SELECT e.FirstName || ' ' || e.LastName as SupportRep, COUNT(c.CustomerId) as CustomerCount FROM employees e LEFT JOIN customers c ON e.EmployeeId = c.SupportRepId GROUP BY e.EmployeeId ORDER BY CustomerCount DESC"
+  },
+  {
+    "question": "Highest invoice total",
+    "sql": "SELECT MAX(Total) as HighestInvoice FROM invoices"
+  }
+]

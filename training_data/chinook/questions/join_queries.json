@@ -1,0 +1,62 @@
+[
+  {
+    "question": "List albums with artist names",
+    "sql": "SELECT al.Title as Album, ar.Name as Artist FROM albums al JOIN artists ar ON al.ArtistId = ar.ArtistId ORDER BY ar.Name"
+  },
+  {
+    "question": "Show tracks with album and artist",
+    "sql": "SELECT t.Name as Track, al.Title as Album, ar.Name as Artist FROM tracks t JOIN albums al ON t.AlbumId = al.AlbumId JOIN artists ar ON al.ArtistId = ar.ArtistId"
+  },
+  {
+    "question": "Customer invoices with details",
+    "sql": "SELECT c.FirstName, c.LastName, i.InvoiceId, i.InvoiceDate, i.Total FROM customers c JOIN invoices i ON c.CustomerId = i.CustomerId ORDER BY i.InvoiceDate DESC"
+  },
+  {
+    "question": "Employees and their customers",
+    "sql": "SELECT e.FirstName as EmployeeName, e.LastName as EmployeeLastName, COUNT(c.CustomerId) as CustomerCount FROM employees e LEFT JOIN customers c ON e.EmployeeId = c.SupportRepId GROUP BY e.EmployeeId, e.FirstName, e.LastName"
+  },
+  {
+    "question": "Tracks with genre and media type",
+    "sql": "SELECT t.Name as Track, g.Name as Genre, mt.Name as MediaType FROM tracks t LEFT JOIN genres g ON t.GenreId = g.GenreId JOIN media_types mt ON t.MediaTypeId = mt.MediaTypeId"
+  },
+  {
+    "question": "Invoice details with track information",
+    "sql": "SELECT i.InvoiceId, t.Name as Track, il.UnitPrice, il.Quantity FROM invoices i JOIN invoice_items il ON i.InvoiceId = il.InvoiceId JOIN tracks t ON il.TrackId = t.TrackId"
+  },
+  {
+    "question": "Customers with their support representative",
+    "sql": "SELECT c.FirstName || ' ' || c.LastName as Customer, e.FirstName || ' ' || e.LastName as SupportRep FROM customers c LEFT JOIN employees e ON c.SupportRepId = e.EmployeeId"
+  },
+  {
+    "question": "Employees with their manager",
+    "sql": "SELECT e.FirstName || ' ' || e.LastName as Employee, m.FirstName || ' ' || m.LastName as Manager FROM employees e LEFT JOIN employees m ON e.ReportsTo = m.EmployeeId"
+  },
+  {
+    "question": "Tracks in playlists",
+    "sql": "SELECT p.Name as Playlist, t.Name as Track FROM playlists p JOIN playlist_track pt ON p.PlaylistId = pt.PlaylistId JOIN tracks t ON pt.TrackId = t.TrackId"
+  },
+  {
+    "question": "Invoice with customer and billing country",
+    "sql": "SELECT c.FirstName, c.LastName, i.InvoiceDate, i.BillingCountry, i.Total FROM customers c JOIN invoices i ON c.CustomerId = i.CustomerId"
+  },
+  {
+    "question": "Albums with track count",
+    "sql": "SELECT ar.Name as Artist, al.Title as Album, COUNT(t.TrackId) as Tracks FROM artists ar JOIN albums al ON ar.ArtistId = al.ArtistId LEFT JOIN tracks t ON al.AlbumId = t.AlbumId GROUP BY ar.Name, al.Title"
+  },
+  {
+    "question": "Genre sales revenue",
+    "sql": "SELECT g.Name as Genre, SUM(il.UnitPrice * il.Quantity) as Revenue FROM genres g JOIN tracks t ON g.GenreId = t.GenreId JOIN invoice_items il ON t.TrackId = il.TrackId GROUP BY g.Name ORDER BY Revenue DESC"
+  },
+  {
+    "question": "Artist revenue ranking",
+    "sql": "SELECT ar.Name as Artist, SUM(il.UnitPrice * il.Quantity) as Revenue FROM artists ar JOIN albums al ON ar.ArtistId = al.ArtistId JOIN tracks t ON al.AlbumId = t.AlbumId JOIN invoice_items il ON t.TrackId = il.TrackId GROUP BY ar.Name ORDER BY Revenue DESC LIMIT 10"
+  },
+  {
+    "question": "Customer purchase history",
+    "sql": "SELECT c.FirstName, c.LastName, i.InvoiceDate, t.Name as Track, il.UnitPrice FROM customers c JOIN invoices i ON c.CustomerId = i.CustomerId JOIN invoice_items il ON i.InvoiceId = il.InvoiceId JOIN tracks t ON il.TrackId = t.TrackId"
+  },
+  {
+    "question": "Most popular tracks by sales quantity",
+    "sql": "SELECT t.Name as Track, ar.Name as Artist, SUM(il.Quantity) as TotalSold FROM tracks t JOIN albums al ON t.AlbumId = al.AlbumId JOIN artists ar ON al.ArtistId = ar.ArtistId JOIN invoice_items il ON t.TrackId = il.TrackId GROUP BY t.Name, ar.Name ORDER BY TotalSold DESC LIMIT 10"
+  }
+]
