@@ -2,6 +2,10 @@
 vanna==0.7.9
 anthropic>=0.40.0
 chromadb<1.0.0
+claude-agent-sdk>=0.1.0
+
+# Async support
+anyio>=4.0.0
 
 # Embeddings
 langchain-huggingface

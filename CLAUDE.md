@@ -1,1034 +1,669 @@
-# CLAUDE.md - Instructions for Claude Code Assistant
+# CLAUDE.md - Guide for Claude Code Agent
 
-**Project**: Detomo SQL AI
-**Version**: 1.2
-**Date**: 2025-10-26
-**Database**: SQLite (data/chinook.db)
+**Project**: Detomo SQL AI v2.0
+**Last Updated**: 2025-10-26
 
 ---
 
-## 📁 File Organization Rules
+## OVERVIEW
 
-**IMPORTANT**: Follow these rules strictly when creating or organizing files.
-
-### Root Directory (Only 3 Core Files)
-```
-SQL-Agent/
-├── README.md          # Project overview and quick start
-├── TASK_MASTER.md     # Project progress tracker
-└── CLAUDE.md          # This file - Instructions for Claude
-```
-
-**Rule**: Keep root clean! Only these 3 files + PRD.md allowed in root.
-
-### All Documentation → `docs/`
-
-**Rule**: ALL documentation files created during development must go to `docs/` with appropriate subdirectory:
-
-```
-docs/
-├── api/               # API documentation
-│   ├── API_DOCUMENTATION.md
-│   └── BACKEND_SWITCHING.md
-├── guides/            # User guides and tutorials
-│   └── QUICKSTART_API.md
-└── development/       # Development documentation
-    ├── TASK_XX_SUMMARY.md        # Task completion summaries
-    ├── PROJECT_STRUCTURE.md       # Detailed structure docs
-    └── REORGANIZATION_SUMMARY.md  # Change logs
-```
-
-### Scripts → `scripts/`
-
-**Rule**: All utility scripts go to `scripts/`:
-- Training scripts (train_*.py)
-- Verification scripts (verify_*.py, check_*.py)
-- Database scripts (reset_*.py)
-- Any automation scripts
-
-### Tests → `tests/`
-
-**Rule**: Organize tests by type:
-```
-tests/
-├── unit/          # Unit tests (individual components)
-├── integration/   # Integration tests (components together)
-└── e2e/          # End-to-end tests (future)
-```
-
-### When Creating New Files
-
-1. **Documentation** → Always create in `docs/` with appropriate subdirectory
-2. **Scripts** → Always create in `scripts/`
-3. **Tests** → Create in `tests/unit/` or `tests/integration/`
-4. **Source Code** → Create in `src/`, `api/`, or `backend/`
-
-### Examples
-
-✅ **Correct**:
-- Task summary → `docs/development/TASK_06_SUMMARY.md`
-- API guide → `docs/api/ENDPOINTS.md`
-- Verification script → `scripts/verify_api.py`
-- Unit test → `tests/unit/test_config.py`
-
-❌ **Wrong**:
-- `TASK_06_SUMMARY.md` (root)
-- `API_GUIDE.md` (root)
-- `verify_api.py` (root)
-- `test_something.py` (root)
-
-**Remember**: Clean root = Professional project!
+This guide helps Claude Code agent (or any developer) implement the Detomo SQL AI project efficiently. Follow this workflow for each task to ensure consistency and completeness.
 
 ---
 
-## 🚀 Quick Start
+## START COMMAND
 
-### To Start Working on Tasks:
+**When the user types "start"**, Claude Code agent should:
 
-**Just type**: `start`
+### 1. Check Current Task Status
 
-Claude will:
-1. Check current progress in TASK_MASTER.md
-2. Find the next incomplete task
-3. Read the task file
-4. Execute all steps automatically
-5. Verify completion
-6. Update progress
-7. Move to next task
+Read [TASK_MASTER.md](TASK_MASTER.md) to:
+- Identify completed tasks (✅ Done)
+- Identify in-progress tasks (⏳ In Progress)
+- Identify blocked tasks (dependencies not met)
+- Calculate overall progress (X/12 tasks completed)
 
----
+### 2. Verify Environment & Prerequisites
 
-## 📋 Manual Commands
+Check that everything is set up correctly:
 
-| Command | Description |
-|---------|-------------|
-| `start` | Auto-execute next task |
-| `start task 01` | Execute specific task |
-| `status` | Show current progress |
-| `verify` | Verify current task completion |
-| `next` | Skip to next task |
-
----
-
-## 🤖 Auto-Execution Mode
-
-When you say **"start"**, Claude will:
-
-### Step 1: Analyze Current State
-```
-- Read TASK_MASTER.md
-- Find current/next task
-- Check dependencies completed
-- Verify prerequisites
-```
-
-### Step 2: Execute Task
-```
-- Read task file (tasks/TASK_XX_*.md)
-- Execute all implementation steps
-- Run verification scripts
-- Test deliverables
-```
-
-### Step 3: Update Progress
-```
-- Mark task as completed in TASK_MASTER.md
-- Update completion percentage
-- Record completion date
-- Note any issues
-```
-
-### Step 4: Continue or Stop
-```
-- If more tasks: Ask "Continue to next task?"
-- If blocked: Report issue and stop
-- If complete: Celebrate! 🎉
-```
-
----
-
-## 📊 Current Project Status
-
-**Database Type**: SQLite (Updated from PostgreSQL)
-**Location**: `data/chinook.db`
-**Total Tasks**: 12
-**Completed**: 2/12 (17%)
-**Current Phase**: Phase 1 - Foundation
-
-**Key Changes**:
-- ✅ Using SQLite instead of PostgreSQL (simpler setup!)
-- ✅ Database already exists at data/chinook.db
-- ✅ Task 01 reduced from 2h to 30min
-- ✅ Table names: lowercase (albums, customers, invoice_items)
-- ✅ Using `uv` for virtual environment management
-
----
-
-## 🔧 Setup Virtual Environment
-
-This project uses `uv` for fast and efficient Python environment management.
-
-### Initial Setup
 ```bash
-# Create virtual environment
-uv venv
+# Verify virtual environment
+python --version  # Should be 3.10+
 
-# Activate virtual environment
-# On Windows (Git Bash):
-source .venv/Scripts/activate
+# Check if required files exist
+ls TASK_MASTER.md CLAUDE.md tasks/ docs/PRD.md
 
-# On Windows (PowerShell):
-.venv\Scripts\Activate.ps1
+# Check git status (if applicable)
+git status
 
-# On Linux/Mac:
+# Verify dependencies (if requirements.txt exists)
+pip list | grep -E "vanna|flask|anthropic|claude"
+```
+
+### 3. Find Next Task
+
+Based on TASK_MASTER.md:
+- Identify the next task to work on (first "Not Started" task with dependencies met)
+- Check task dependencies are satisfied
+- Read the task file: `tasks/TASK_XX_name.md`
+
+### 4. Display Status Summary
+
+Present a clear summary:
+
+```
+========================================
+DETOMO SQL AI - PROJECT STATUS
+========================================
+
+Overall Progress: X/12 tasks completed (Y%)
+
+Phase 1: Core Backend Setup
+  ✅ TASK 01: Claude Agent Endpoint Server - DONE
+  ⬜ TASK 02: Vanna Custom Class - NOT STARTED
+
+Phase 2: Training Data & Knowledge Base
+  ⬜ TASK 03: Training Data Preparation - NOT STARTED
+  ⬜ TASK 04: Training Script - NOT STARTED
+
+... (continue for all phases)
+
+========================================
+NEXT TASK: TASK_02 (Vanna Custom Class)
+========================================
+
+Dependencies:
+  ✅ TASK 01 (Claude Agent Endpoint) - COMPLETED
+
+Estimated Time: 6-8 hours
+
+Objectives:
+1. Create src/detomo_vanna.py module
+2. Implement ClaudeAgentChat class
+3. Implement DetomoVanna class
+4. Write unit tests
+
+Task File: tasks/TASK_02_vanna_custom_class.md
+
+========================================
+```
+
+### 5. Ask for Confirmation
+
+Ask the user:
+
+```
+Ready to start TASK_02: Vanna Custom Class Implementation?
+
+This task will:
+- Create src/detomo_vanna.py with custom Vanna classes
+- Implement integration with Claude Agent SDK
+- Write unit tests
+
+Prerequisites check:
+✅ TASK_01 completed (Claude Agent endpoint available)
+✅ Virtual environment active
+⚠️  Claude Agent endpoint should be running on http://localhost:8000
+
+Do you want to proceed? (yes/no)
+```
+
+### 6. Start Implementation (if confirmed)
+
+If user confirms:
+1. Read the task file in detail
+2. Create necessary folder structure
+3. Begin implementation following the task steps
+4. Update progress in real-time
+
+---
+
+## ENVIRONMENT SETUP
+
+### Prerequisites
+
+1. **Python Version**: Python 3.10 or higher
+2. **Virtual Environment**: Use existing `.venv` in project root
+3. **Package Manager**: Use `uv pip install` for all package installations
+
+### Initial Setup Steps
+
+```bash
+# 1. Activate virtual environment
+# On Windows:
+.venv\Scripts\activate
+
+# On Unix/macOS:
 source .venv/bin/activate
 
-# Install dependencies
+# 2. Verify Python version
+python --version
+# Should output: Python 3.10.x or higher
+
+# 3. Install dependencies (when requirements.txt is ready)
 uv pip install -r requirements.txt
+
+# 4. Create .env file
+cp .env.example .env
+# Edit .env and add your ANTHROPIC_API_KEY
 ```
 
-### Running the Project
-Always activate the virtual environment before running any Python scripts:
+### Environment Variables
+
+Create a `.env` file in the project root:
+
 ```bash
-# Activate
-source .venv/Scripts/activate  # Windows Git Bash
-# or
-source .venv/bin/activate       # Linux/Mac
+# Anthropic API (for Claude Agent SDK server)
+ANTHROPIC_API_KEY=sk-ant-your-api-key-here
 
-# Run tests
-PYTHONPATH=. python tests/test_detomo_vanna.py
+# Claude Agent SDK endpoint
+CLAUDE_AGENT_ENDPOINT=http://localhost:8000/generate
 
-# Run training scripts (later)
-python scripts/train_chinook.py
-```
+# Database
+DATABASE_PATH=data/chinook.db
 
-**Note**: The `.venv/` directory is already in `.gitignore` and should not be committed.
-
----
-
-## Overview
-
-This document provides step-by-step instructions for Claude Code Assistant to execute tasks in the Detomo SQL AI project. Each task has detailed implementation steps, verification criteria, and update procedures.
-
----
-
-## General Workflow
-
-For each task, follow this workflow:
-
-```
-1. Read Task File (tasks/TASK_XX_name.md)
-2. Verify Prerequisites
-3. Execute Implementation Steps
-4. Verify Completion Criteria
-5. Update TASK_MASTER.md
-6. Update This File (CLAUDE.md)
-7. Move to Next Task
+# Vector Database (managed by Vanna)
+VECTOR_DB_PATH=./detomo_vectordb
 ```
 
 ---
 
-## Task Execution Guide
+## WORKFLOW CHECKLIST
 
-### 🔴 PHASE 1: FOUNDATION
+When implementing each task, follow this checklist:
 
----
+### Step 1: Read Task File
+- [ ] Open the task file from `tasks/TASK_XX_name.md`
+- [ ] Read **Overview**, **Objectives**, and **Requirements** sections
+- [ ] Understand **Dependencies** - make sure prerequisite tasks are completed
+- [ ] Review **Success Criteria** to know what "done" looks like
 
-## TASK 01: Verify Chinook Database
+### Step 2: Plan Implementation
+- [ ] Review **Implementation Steps** in the task file
+- [ ] Check **File Structure** to understand what files to create/modify
+- [ ] Identify any new dependencies to add to `requirements.txt`
+- [ ] Consider edge cases and error handling
 
-**File**: `tasks/TASK_01_setup_chinook_database.md`
-**Estimate**: 30 minutes
-**Database**: SQLite (data/chinook.db)
+### Step 3: Implement Code
+- [ ] Create/modify files according to task requirements
+- [ ] Follow Python best practices (PEP 8, type hints, docstrings)
+- [ ] Add comprehensive error handling
+- [ ] Add logging where appropriate
+- [ ] Write clear comments for complex logic
 
-### Execution Steps
+### Step 4: Write Tests
+- [ ] Create unit tests in `tests/unit/` for isolated components
+- [ ] Create integration tests in `tests/integration/` for multi-component flows
+- [ ] Aim for ≥80% code coverage
+- [ ] Test both happy paths and error cases
 
-#### Step 1: Verify Database File Exists
+### Step 5: Run Tests
 ```bash
-# Check if database file exists
-ls -la data/chinook.db
-
-# Expected: File size ~884KB
-```
-
-#### Step 2: Create Test Scripts
-Create verification scripts to test database:
-
-**File: `verify_db.py`**
-```python
-import sqlite3
-
-def verify_database():
-    print("Verifying Chinook Database...")
-
-    # Connect to database
-    conn = sqlite3.connect('data/chinook.db')
-    cursor = conn.cursor()
-
-    # Get all tables
-    cursor.execute("""
-        SELECT name FROM sqlite_master
-        WHERE type='table' AND name NOT LIKE 'sqlite_%'
-        ORDER BY name
-    """)
-    tables = [row[0] for row in cursor.fetchall()]
-
-    print(f"\n✓ Found {len(tables)} tables:")
-
-    # Count rows in each table
-    for table in tables:
-        cursor.execute(f"SELECT COUNT(*) FROM {table}")
-        count = cursor.fetchone()[0]
-        print(f"  - {table}: {count:,} rows")
-
-    # Test sample queries
-    print("\nTesting sample queries:")
-
-    # Query 1: Total customers
-    cursor.execute("SELECT COUNT(*) FROM customers")
-    print(f"  ✓ Total customers: {cursor.fetchone()[0]}")
-
-    # Query 2: Total revenue
-    cursor.execute("SELECT SUM(Total) FROM invoices")
-    revenue = cursor.fetchone()[0]
-    print(f"  ✓ Total revenue: ${revenue:,.2f}")
-
-    # Query 3: Top artist
-    cursor.execute("""
-        SELECT ar.Name, COUNT(al.AlbumId) as albums
-        FROM artists ar
-        JOIN albums al ON ar.ArtistId = al.ArtistId
-        GROUP BY ar.ArtistId
-        ORDER BY albums DESC
-        LIMIT 1
-    """)
-    top_artist = cursor.fetchone()
-    print(f"  ✓ Top artist: {top_artist[0]} ({top_artist[1]} albums)")
-
-    conn.close()
-    print("\n✅ Database verification completed successfully!")
-    return True
-
-if __name__ == "__main__":
-    verify_database()
-```
-
-#### Step 3: Run Verification
-```bash
-# Run verification script
-python verify_db.py
-```
-
-**Expected Output**:
-```
-Verifying Chinook Database...
-
-✓ Found 11 tables:
-  - albums: 347 rows
-  - artists: 275 rows
-  - customers: 59 rows
-  - employees: 8 rows
-  - genres: 25 rows
-  - invoice_items: 2,240 rows
-  - invoices: 412 rows
-  - media_types: 5 rows
-  - playlist_track: 8,715 rows
-  - playlists: 18 rows
-  - tracks: 3,503 rows
-
-Testing sample queries:
-  ✓ Total customers: 59
-  ✓ Total revenue: $2,328.60
-  ✓ Top artist: Iron Maiden (21 albums)
-
-✅ Database verification completed successfully!
-```
-
-#### Step 4: Create .env File
-```bash
-# Create .env in project root
-cat > .env << 'EOF'
-# Database Configuration (SQLite)
-DB_TYPE=sqlite
-DB_PATH=data/chinook.db
-
-# LLM Configuration (for later use)
-ANTHROPIC_API_KEY=
-
-# Application Settings
-FLASK_ENV=development
-FLASK_DEBUG=True
-LOG_LEVEL=INFO
-EOF
-```
-
-#### Step 5: Test Database Connection
-```python
-# Quick test
-python -c "
-import sqlite3
-conn = sqlite3.connect('data/chinook.db')
-print('✓ Database connection successful')
-cursor = conn.cursor()
-cursor.execute('SELECT COUNT(*) FROM customers')
-print(f'✓ Customers: {cursor.fetchone()[0]}')
-conn.close()
-"
-```
-
-### Verification Checklist
-- [ ] File `data/chinook.db` exists (884KB)
-- [ ] Database opens with sqlite3
-- [ ] All 11 tables present
-- [ ] Row counts correct (customers=59, albums=347, etc.)
-- [ ] Sample queries execute successfully
-- [ ] JOIN queries work
-- [ ] Aggregation queries work
-- [ ] `.env` file created with DB_PATH
-- [ ] verify_db.py script runs successfully
-
-### Update TASK_MASTER.md
-After completion, update task status:
-```markdown
-#### ✅ Task 01: Verify Chinook Database
-- **Status**: ✅ Completed
-- **Completion**: ☑ 100%
-- **Completed Date**: [DATE]
-- **Notes**: SQLite database verified with 11 tables, 15,000+ total rows
-```
-
-### Next Task
-➡️ Proceed to TASK 02
-
----
-
-## TASK 02: Create Training Data Files
-
-**File**: `tasks/TASK_02_create_training_data.md`
-**Estimate**: 16 hours
-
-### Execution Steps
-
-#### Step 1: Create Directory Structure
-```bash
-mkdir -p training_data/chinook/{ddl,documentation,questions}
-```
-
-#### Step 2: Extract DDL Files
-```bash
-# For each table, extract DDL
-psql -U postgres -d chinook
-
-# Use \d+ table_name and save to file
-# Example for Customer table:
-\d+ Customer > temp_customer_ddl.txt
-
-# Create clean DDL file: training_data/chinook/ddl/customer.sql
-# Repeat for all 11 tables:
-# album, artist, customer, employee, genre, invoice, invoice_line,
-# media_type, playlist, playlist_track, track
-```
-
-**Claude Action**: Use the Write tool to create each DDL file based on the table structure.
-
-Example template:
-```sql
-CREATE TABLE Customer (
-    CustomerId INTEGER PRIMARY KEY,
-    FirstName VARCHAR(40) NOT NULL,
-    LastName VARCHAR(20) NOT NULL,
-    -- ... (add all columns)
-);
-```
-
-#### Step 3: Create Documentation Files
-**Claude Action**: For each table, create a documentation file in `training_data/chinook/documentation/`.
-
-Template structure:
-```markdown
-# [Table Name]
-
-## Description
-[Purpose of the table]
-
-## Columns
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| ... | ... | ... | ... |
-
-## Relationships
-- [Describe relationships]
-
-## Business Rules
-1. [Rule 1]
-2. [Rule 2]
-
-## Common Query Patterns
-[Example queries]
-
-## Japanese Terminology
-- [English term] = [Japanese term]
-```
-
-Create files for:
-- customer.md, invoice.md, invoice_line.md, track.md, album.md, artist.md,
-- genre.md, playlist.md, employee.md, media_type.md, business_rules.md
-
-#### Step 4: Create Q&A JSON Files
-**Claude Action**: Create 4 JSON files with question-answer pairs.
-
-**File 1**: `training_data/chinook/questions/basic_queries.json`
-```json
-[
-  {
-    "question": "How many customers are there?",
-    "sql": "SELECT COUNT(*) FROM Customer"
-  },
-  {
-    "question": "顧客は何人いますか？",
-    "sql": "SELECT COUNT(*) FROM Customer"
-  }
-  // Add 18 more basic queries
-]
-```
-
-**File 2**: `training_data/chinook/questions/aggregation_queries.json`
-- 15 aggregation queries (SUM, AVG, COUNT, GROUP BY)
-
-**File 3**: `training_data/chinook/questions/join_queries.json`
-- 15 join queries (INNER JOIN, LEFT JOIN, multiple joins)
-
-**File 4**: `training_data/chinook/questions/japanese_queries.json`
-- 20 queries in Japanese
-
-### Verification
-- [ ] Directory structure created
-- [ ] 11 DDL files + 1 relationships file (12 total)
-- [ ] 10 table docs + 1 business rules (11 total)
-- [ ] 4 Q&A JSON files with 70+ total questions
-- [ ] All JSON files valid (use `jq` to validate)
-- [ ] Japanese characters display correctly (UTF-8)
-- [ ] All SQL queries tested and working
-
-### Update TASK_MASTER.md
-```markdown
-#### ✅ Task 02: Create Training Data Files
-- **Status**: ✅ Completed
-- **Completion**: ☑ 100%
-- **Completed Date**: [DATE]
-- **Notes**: Created 12 DDL, 11 docs, 70+ Q&A pairs
-```
-
-### Next Task
-➡️ Proceed to TASK 03
-
----
-
-## TASK 03: Implement DetomoVanna Class
-
-**File**: `tasks/TASK_03_implement_detomo_vanna.md`
-**Estimate**: 8 hours
-
-### Execution Steps
-
-#### Step 1: Install Dependencies
-```bash
-# Create requirements.txt
-cat > requirements.txt << 'EOF'
-vanna==0.7.9
-anthropic>=0.40.0
-chromadb<1.0.0
-psycopg2-binary
-langchain-huggingface
-sentence-transformers
-python-dotenv
-flask>=3.0.0
-flask-cors
-pandas
-plotly
+# Run all tests
 pytest
-EOF
 
-# Install
-pip install -r requirements.txt
+# Run with coverage report
+pytest --cov=src --cov=. --cov-report=html
+
+# Run specific test file
+pytest tests/unit/test_specific.py
+
+# Run with verbose output
+pytest -v
 ```
 
-#### Step 2: Create Project Structure
-```bash
-mkdir -p src tests
-touch src/__init__.py
-touch src/config.py
-touch src/detomo_vanna_dev.py
-touch src/detomo_vanna_prod.py
-touch tests/__init__.py
-touch tests/test_detomo_vanna.py
-```
+### Step 6: Manual Testing (if applicable)
+- [ ] Start required servers (e.g., `python claude_agent_server.py`)
+- [ ] Test endpoints with curl/Postman
+- [ ] Verify output matches expected behavior
+- [ ] Check logs for errors
 
-#### Step 3: Implement Configuration
-**Claude Action**: Create `src/config.py` with the configuration code from TASK_03.
+### Step 7: Update Documentation
+- [ ] Update docstrings in code
+- [ ] Update `TASK_MASTER.md` - mark task as completed
+- [ ] Update `README.md` if new features added
+- [ ] Add notes to task file about implementation decisions
 
-Key components:
-- Load environment variables from .env
-- Database connection settings
-- LLM settings (model, temperature, max_tokens)
-- Vector DB settings
-- DevelopmentConfig and ProductionConfig classes
-
-#### Step 4: Implement DetomoVanna Development Class
-**Claude Action**: Create `src/detomo_vanna_dev.py`
-
-Key components:
-- Inherit from ChromaDB_VectorStore and ClaudeAgentChat/Anthropic_Chat
-- Initialize with config
-- connect_to_database() method
-- get_training_stats() method
-- Factory function create_vanna_dev()
-
-#### Step 5: Implement DetomoVanna Production Class
-**Claude Action**: Create `src/detomo_vanna_prod.py`
-
-Similar to dev but uses Anthropic_Chat directly.
-
-#### Step 6: Create Tests
-**Claude Action**: Create `tests/test_detomo_vanna.py`
-
-Test cases:
-- test_vanna_initialization()
-- test_database_connection()
-- test_training_stats()
-
-#### Step 7: Run Tests
-```bash
-# Run tests
-pytest tests/test_detomo_vanna.py -v
-
-# Test manually
-python -c "
-from src.detomo_vanna_dev import create_vanna_dev
-vn = create_vanna_dev()
-print('Connection test:', vn.run_sql('SELECT COUNT(*) FROM Customer'))
-print('Training stats:', vn.get_training_stats())
-"
-```
-
-### Verification
-- [ ] All dependencies installed
-- [ ] Project structure created
-- [ ] src/config.py working
-- [ ] src/detomo_vanna_dev.py working
-- [ ] src/detomo_vanna_prod.py working
-- [ ] Tests passing
-- [ ] Can connect to database
-- [ ] Can query database
-
-### Update TASK_MASTER.md
-```markdown
-#### ✅ Task 03: Implement DetomoVanna Class
-- **Status**: ✅ Completed
-- **Completion**: ☑ 100%
-- **Completed Date**: [DATE]
-- **Notes**: Both dev and prod classes implemented, tests passing
-```
-
-### Next Task
-➡️ Proceed to TASK 04
+### Step 8: Check Context Usage
+- [ ] Monitor token/context usage
+- [ ] If context < 20% remaining → **Create new chat session**
+- [ ] Before switching: Save all progress, update TASK_MASTER.md
+- [ ] In new session: Reference TASK_MASTER.md to continue
 
 ---
 
-## TASK 04: Training Script Implementation
+## COMMON COMMANDS
 
-**File**: `tasks/TASK_04_training_script.md`
-**Estimate**: 4 hours
+### Development
 
-### Execution Steps
-
-#### Step 1: Create Scripts
 ```bash
-mkdir -p scripts
-touch scripts/__init__.py
-touch scripts/train_chinook.py
-touch scripts/reset_training.py
-touch scripts/check_training.py
+# Activate virtual environment
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Unix/macOS
+
+# Install new package
+uv pip install package-name
+
+# Update requirements.txt after installing packages
+uv pip freeze > requirements.txt
+
+# Run Python script
+python script_name.py
+
+# Run script with environment variables from .env
+python -c "from dotenv import load_dotenv; load_dotenv()" && python script.py
 ```
 
-#### Step 2: Implement Training Script
-**Claude Action**: Create `scripts/train_chinook.py` with the code from TASK_04.
+### Testing
 
-Key components:
-- ChinookTrainer class
-- train_ddl() method
-- train_documentation() method
-- train_questions() method
-- verify_training() method
-- main() function
-
-#### Step 3: Implement Helper Scripts
-**Claude Action**:
-- Create `scripts/reset_training.py` - removes vector DB
-- Create `scripts/check_training.py` - shows training stats
-
-#### Step 4: Make Executable
 ```bash
-# Windows - not needed
-# Linux/Mac
-chmod +x scripts/*.py
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=src --cov=. --cov-report=html
+
+# Run specific test file
+pytest tests/unit/test_cache.py
+
+# Run specific test function
+pytest tests/unit/test_cache.py::test_cache_set
+
+# Run with verbose output
+pytest -v
+
+# Run with print statements visible
+pytest -s
+
+# View coverage report
+# Open htmlcov/index.html in browser
 ```
 
-#### Step 5: Run Training
+### Running Servers
+
+```bash
+# Run Claude Agent SDK endpoint (Terminal 1)
+python claude_agent_server.py
+# Server runs on http://localhost:8000
+
+# Run Flask API (Terminal 2)
+python app.py
+# Server runs on http://localhost:5000
+
+# Test Claude Agent endpoint
+curl -X GET http://localhost:8000/health
+
+# Test Flask API
+curl -X GET http://localhost:5000/api/v0/health
+```
+
+### Training & Database
+
 ```bash
 # Run training script
 python scripts/train_chinook.py
 
-# This will:
-# 1. Load all DDL files
-# 2. Load all documentation files
-# 3. Load all Q&A pairs
-# 4. Verify training data
-# 5. Show summary
+# Verify ChromaDB data
+python -c "from src.detomo_vanna import DetomoVanna; vn = DetomoVanna(config={'path': './detomo_vectordb'}); print(len(vn.get_training_data()))"
 
-# Expected time: 5-10 minutes
-```
-
-#### Step 6: Verify Training
-```bash
-# Check training stats
-python scripts/check_training.py
-
-# Expected output:
-# Total items: 90+
-# DDL: 12
-# Documentation: 11
-# SQL/Q&A: 70+
-```
-
-#### Step 7: Test SQL Generation
-```bash
-python -c "
-from src.detomo_vanna_dev import create_vanna_dev
-
-vn = create_vanna_dev()
-
-# Test questions
-questions = [
-    'How many customers are there?',
-    '顧客は何人いますか？',
-    'Top 10 customers by revenue'
-]
-
-for q in questions:
-    print(f'\nQuestion: {q}')
-    try:
-        sql = vn.generate_sql(q)
-        print(f'SQL: {sql}')
-    except Exception as e:
-        print(f'Error: {e}')
-"
-```
-
-### Verification
-- [ ] Scripts created
-- [ ] train_chinook.py runs without errors
-- [ ] All training data loaded (90+ items)
-- [ ] Vector database created (detomo_vectordb/ folder)
-- [ ] check_training.py shows correct stats
-- [ ] Can generate SQL from natural language
-- [ ] Generated SQL is valid
-
-### Update TASK_MASTER.md
-```markdown
-#### ✅ Task 04: Training Script Implementation
-- **Status**: ✅ Completed
-- **Completion**: ☑ 100%
-- **Completed Date**: [DATE]
-- **Notes**: Training completed with [X] items, SQL generation working
-```
-
-### Next Task
-➡️ Proceed to TASK 05
-
----
-
-## TASK 05: Flask API Development
-
-**File**: `tasks/TASK_05_flask_api.md`
-**Estimate**: 16 hours
-
-### Execution Steps
-
-#### Step 1: Create Flask App Structure
-```bash
-mkdir -p api static templates
-touch app.py
-touch api/__init__.py
-touch api/routes.py
-touch api/errors.py
-```
-
-#### Step 2: Implement Main Flask App
-**Claude Action**: Create `app.py` with Flask application setup.
-
-Key endpoints to implement:
-1. `POST /api/v0/generate_sql` - Generate SQL from question
-2. `POST /api/v0/run_sql` - Execute SQL query
-3. `POST /api/v0/generate_plotly_figure` - Generate chart
-4. `GET /api/v0/get_training_data` - List training data
-5. `POST /api/v0/train` - Add training data
-6. `DELETE /api/v0/remove_training_data` - Remove training data
-
-#### Step 3: Implement Error Handling
-**Claude Action**: Create `api/errors.py` with error handlers.
-
-#### Step 4: Add Logging
-Configure logging for debugging and monitoring.
-
-#### Step 5: Run Flask App
-```bash
-# Development mode
-python app.py
-
-# Should start on http://localhost:5000
-```
-
-#### Step 6: Test Endpoints
-```bash
-# Test generate_sql
-curl -X POST http://localhost:5000/api/v0/generate_sql \
-  -H "Content-Type: application/json" \
-  -d '{"question": "How many customers?"}'
-
-# Test run_sql
-curl -X POST http://localhost:5000/api/v0/run_sql \
-  -H "Content-Type: application/json" \
-  -d '{"sql": "SELECT COUNT(*) FROM Customer"}'
-```
-
-#### Step 7: Create API Tests
-**Claude Action**: Create `tests/test_api.py` with endpoint tests.
-
-### Verification
-- [ ] Flask app runs without errors
-- [ ] All 6 endpoints implemented
-- [ ] generate_sql endpoint works
-- [ ] run_sql endpoint works
-- [ ] Error handling works
-- [ ] Logging configured
-- [ ] API tests pass
-- [ ] CORS enabled
-
-### Update TASK_MASTER.md
-```markdown
-#### ✅ Task 05: Flask API Development
-- **Status**: ✅ Completed
-- **Completion**: ☑ 100%
-- **Completed Date**: [DATE]
-- **Notes**: 6 API endpoints implemented, all tests passing
-```
-
-### Next Task
-➡️ Proceed to TASK 06
-
----
-
-## TASK 06-12: Remaining Tasks
-
-For remaining tasks (06-12), follow the same pattern:
-
-1. **Read task file** in `tasks/` folder
-2. **Execute implementation steps** as described
-3. **Verify completion** against checklist
-4. **Update TASK_MASTER.md** with progress
-5. **Move to next task**
-
----
-
-## Progress Tracking Commands
-
-### Check Overall Progress
-```bash
-# Count completed tasks
-grep "Status.*Completed" TASK_MASTER.md | wc -l
-
-# View task summary
-grep -A 1 "Task [0-9][0-9]:" TASK_MASTER.md | grep -E "(Task|Status)"
-```
-
-### Update Task Status
-When completing a task, update TASK_MASTER.md:
-```markdown
-# Change from:
-- **Status**: ⏸️ Not Started
-- **Completion**: ☐ 0%
-
-# To:
-- **Status**: ✅ Completed
-- **Completion**: ☑ 100%
-- **Completed Date**: 2025-10-25
-```
-
-### Update Phase Progress
-Calculate phase completion percentage:
-```
-Completion % = (Completed Tasks / Total Tasks in Phase) * 100
+# Connect to SQLite database
+sqlite3 data/chinook.db
+# Inside SQLite:
+# .tables          - List all tables
+# .schema Customer - Show table schema
+# SELECT * FROM Customer LIMIT 5;
+# .quit           - Exit
 ```
 
 ---
 
-## Testing Checklist
+## TASK EXECUTION ORDER
 
-After each task, verify:
-- [ ] Code runs without errors
-- [ ] All files created as specified
-- [ ] Tests pass (if applicable)
-- [ ] Documentation updated
-- [ ] TASK_MASTER.md updated
-- [ ] Ready for next task
+Follow this order for task implementation (see [TASK_MASTER.md](TASK_MASTER.md) for details):
 
----
+### Phase 1: Core Backend Setup
+1. **TASK 01**: Claude Agent Endpoint Server
+2. **TASK 02**: Vanna Custom Class
 
-## Common Issues & Solutions
+### Phase 2: Training Data & Knowledge Base
+3. **TASK 03**: Training Data Preparation (can parallel with TASK 01-02)
+4. **TASK 04**: Training Script
 
-### Issue: Database Connection Fails
-**Solution**:
-```bash
-# Check .env file
-cat .env
+### Phase 3: API Layer
+5. **TASK 05**: Flask API Core Endpoints
+6. **TASK 06**: Cache Implementation (can parallel with TASK 05)
+7. **TASK 07**: Flask API Extended (Vanna-Flask Pattern)
 
-# Test connection
-psql -U detomo_reader -d chinook -h localhost
+### Phase 4: Frontend UI
+8. **TASK 08**: Frontend Setup
 
-# Check PostgreSQL running
-pg_ctl status
-```
+### Phase 5: Testing & QA
+9. **TASK 09**: Unit Testing
+10. **TASK 10**: Integration Testing
+11. **TASK 11**: Optimization & QA
 
-### Issue: Import Errors
-**Solution**:
-```bash
-# Check Python environment
-python --version
-
-# Reinstall dependencies
-pip install -r requirements.txt
-
-# Check installations
-pip list | grep vanna
-```
-
-### Issue: Training Takes Too Long
-**Solution**: This is normal for first training (5-10 minutes). Be patient.
-
-### Issue: SQL Generation Not Accurate
-**Solution**:
-- Add more training data (Q&A pairs)
-- Check training data loaded correctly
-- Review generated SQL and add corrections to training
+### Phase 6: Documentation
+12. **TASK 12**: Documentation
 
 ---
 
-## Quality Standards
+## CODE QUALITY STANDARDS
 
-### Code Quality
+### Python Style
 - Follow PEP 8 style guide
-- Add docstrings to all functions
-- Handle errors gracefully
-- Log important events
+- Use type hints for function parameters and return values
+- Maximum line length: 100 characters
+- Use descriptive variable names
 
 ### Documentation
-- Update README.md with setup instructions
-- Comment complex code sections
-- Keep TASK_MASTER.md up to date
-- Document API endpoints
+- Add docstrings to all functions and classes (Google style)
+- Include parameter types, return types, and examples
+- Document complex algorithms and business logic
+
+Example:
+```python
+def generate_sql(self, question: str) -> str:
+    """
+    Generate SQL query from natural language question.
+
+    Args:
+        question (str): Natural language question (English or Japanese)
+
+    Returns:
+        str: Generated SQL query
+
+    Raises:
+        ValueError: If question is empty
+        APIError: If Claude Agent SDK call fails
+
+    Example:
+        >>> vn = DetomoVanna(config={...})
+        >>> sql = vn.generate_sql("How many customers?")
+        >>> print(sql)
+        SELECT COUNT(*) FROM Customer
+    """
+    # Implementation here
+```
+
+### Error Handling
+- Always validate input parameters
+- Use try-except blocks for external calls (API, database, file I/O)
+- Log errors with context information
+- Return meaningful error messages
+
+Example:
+```python
+try:
+    response = requests.post(self.agent_endpoint, json=payload, timeout=30)
+    response.raise_for_status()
+    return response.json()
+except requests.exceptions.Timeout:
+    logger.error(f"Timeout calling {self.agent_endpoint}")
+    raise APIError("Claude Agent SDK timeout")
+except requests.exceptions.RequestException as e:
+    logger.error(f"Error calling Claude Agent SDK: {e}")
+    raise APIError(f"Failed to call Claude Agent SDK: {str(e)}")
+```
 
 ### Testing
-- Write tests for all core functionality
-- Aim for ≥80% code coverage
-- Test both success and error cases
-- Verify SQL accuracy ≥85%
+- Write tests before or alongside implementation (TDD approach)
+- Test both happy paths and error cases
+- Use fixtures for common test setup
+- Mock external dependencies (API calls, database)
 
 ---
 
-## Daily Workflow
+## TROUBLESHOOTING
 
-### Start of Day
-1. Review TASK_MASTER.md
-2. Check current task status
-3. Read task file for today's work
-4. Set up development environment
+### Common Issues
 
-### During Development
-1. Follow task implementation steps
-2. Test frequently
-3. Commit code regularly
-4. Update progress in TASK_MASTER.md
+#### Issue 1: Virtual Environment Not Activated
+**Symptom**: `command not found: python` or packages not found
 
-### End of Day
-1. Complete verification checklist
-2. Update TASK_MASTER.md
-3. Commit all changes
-4. Note any blockers or issues
+**Solution**:
+```bash
+# Activate virtual environment
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Unix/macOS
+```
 
----
+#### Issue 2: Package Installation Fails
+**Symptom**: `uv pip install` errors
 
-## Communication
+**Solution**:
+```bash
+# Update uv
+pip install --upgrade uv
 
-### Status Updates
-Update TASK_MASTER.md with:
-- Task progress (percentage)
-- Completion date (when done)
-- Notes (any issues or important info)
-- Blockers (if stuck)
+# Try installing with pip instead
+pip install package-name
+```
 
-### Asking for Help
-If blocked:
-1. Document the issue
-2. Mark task as ⏳ Blocked in TASK_MASTER.md
-3. Note the reason
-4. Request assistance
+#### Issue 3: Claude Agent SDK Connection Error
+**Symptom**: `Connection refused` when calling `/generate`
 
----
+**Solution**:
+```bash
+# Check if server is running
+curl http://localhost:8000/health
 
-## Success Criteria
+# If not running, start it
+python claude_agent_server.py
+```
 
-### Task Completion
-A task is considered complete when:
-- ✅ All implementation steps executed
-- ✅ All verification items checked
-- ✅ Tests passing (if applicable)
-- ✅ Documentation updated
-- ✅ TASK_MASTER.md updated
-- ✅ Ready for next task
+#### Issue 4: Anthropic API Key Error
+**Symptom**: `AuthenticationError: Invalid API key`
 
-### Project Completion
-Project is complete when:
-- ✅ All 12 tasks marked as completed
-- ✅ MVP requirements met (see TASK_MASTER.md)
-- ✅ SQL accuracy ≥ 85%
-- ✅ All tests passing
-- ✅ Documentation complete
-- ✅ Deployed to production
+**Solution**:
+```bash
+# Check .env file has correct key
+cat .env | grep ANTHROPIC_API_KEY
 
----
+# Make sure .env is loaded
+# Add this to your Python script:
+from dotenv import load_dotenv
+load_dotenv()
+```
 
-## Next Steps After Completion
+#### Issue 5: ChromaDB Lock Error
+**Symptom**: `Database is locked` when running training script
 
-Once all tasks are complete:
-1. Conduct final testing
-2. Create demo video
-3. Prepare launch materials
-4. Deploy to production
-5. Monitor performance
-6. Gather user feedback
-7. Plan v2.0 features
+**Solution**:
+```bash
+# Close all processes using ChromaDB
+# Delete the lock file
+rm detomo_vectordb/chroma.sqlite3-wal
 
----
+# Re-run training script
+python scripts/train_chinook.py
+```
 
-## Reference Documents
+#### Issue 6: Import Errors
+**Symptom**: `ModuleNotFoundError: No module named 'src'`
 
-- **PRD.md** - Product Requirements Document
-- **TASK_MASTER.md** - Overall progress tracking
-- **tasks/TASK_XX_*.md** - Individual task details
-- **README.md** - Project overview and setup
+**Solution**:
+```bash
+# Add project root to PYTHONPATH
+export PYTHONPATH="${PYTHONPATH}:$(pwd)"  # Unix/macOS
+set PYTHONPATH=%PYTHONPATH%;%cd%  # Windows
+
+# Or use absolute imports
+# Instead of: from src.detomo_vanna import ...
+# Use: from detomo_vanna import ...
+```
 
 ---
 
-**Last Updated**: 2025-10-25
-**Current Task**: Task 01 (Not Started)
-**Overall Progress**: 0% (0/12 tasks completed)
+## CONTEXT MANAGEMENT
+
+### Token Usage Guidelines
+
+Claude Code has a token limit. Monitor usage to avoid hitting limits:
+
+#### When to Create New Chat Session
+
+Create a new chat session when:
+- Context usage > 80% (< 20% remaining)
+- Switching to a different phase of the project
+- After completing 2-3 major tasks
+
+#### Before Switching Sessions
+
+1. **Save all progress**:
+   - Commit all code changes (if using git)
+   - Update `TASK_MASTER.md` with completion status
+   - Add notes to task files about decisions made
+
+2. **Document current state**:
+   ```bash
+   # Create a session summary
+   echo "Session Summary $(date)" >> SESSION_NOTES.md
+   echo "- Completed: TASK_01, TASK_02" >> SESSION_NOTES.md
+   echo "- Current: TASK_03 (50% done)" >> SESSION_NOTES.md
+   echo "- Next: Finish TASK_03, start TASK_04" >> SESSION_NOTES.md
+   ```
+
+3. **Verify everything works**:
+   - Run all tests: `pytest`
+   - Check servers start: `python claude_agent_server.py`
+   - Review `TASK_MASTER.md` for accuracy
+
+#### Starting New Session
+
+In the new chat session:
+1. Read `TASK_MASTER.md` to understand current progress
+2. Read `SESSION_NOTES.md` (if exists) for context
+3. Read the current task file to continue work
+4. Reference completed task files for implementation patterns
+
+---
+
+## PROJECT STRUCTURE REFERENCE
+
+```
+SQL-Agent/
+├── .env                          # Environment variables (DO NOT COMMIT)
+├── .env.example                  # Example env file (commit this)
+├── requirements.txt              # Python dependencies
+├── CLAUDE.md                     # This file - Claude agent guide
+├── TASK_MASTER.md                # Task tracking and progress
+├── README.md                     # Project overview and quick start
+│
+├── docs/                         # All documentation
+│   ├── PRD.md                    # Product Requirements Document
+│   ├── ARCHITECTURE.md           # System architecture (TASK 12)
+│   ├── API_DOCUMENTATION.md      # API endpoints reference (TASK 12)
+│   └── DEPLOYMENT.md             # Deployment guide (TASK 12)
+│
+├── tasks/                        # Task files (implementation guides)
+│   ├── TASK_01_claude_agent_endpoint.md
+│   ├── TASK_02_vanna_custom_class.md
+│   ├── TASK_03_training_data_preparation.md
+│   ├── TASK_04_training_script.md
+│   ├── TASK_05_flask_api_core.md
+│   ├── TASK_06_cache_implementation.md
+│   ├── TASK_07_flask_api_extended.md
+│   ├── TASK_08_frontend_setup.md
+│   ├── TASK_09_testing_unit.md
+│   ├── TASK_10_testing_integration.md
+│   ├── TASK_11_optimization_qa.md
+│   └── TASK_12_documentation.md
+│
+├── claude_agent_server.py        # Claude Agent SDK HTTP endpoint (TASK 01)
+├── app.py                        # Flask API + UI server (TASK 05, 07)
+├── cache.py                      # Memory cache for query state (TASK 06)
+│
+├── data/
+│   └── chinook.db               # SQLite database (download separately)
+│
+├── static/                       # Frontend UI files (TASK 08)
+│   ├── index.html               # Main SPA entry point
+│   ├── detomo_logo.svg          # Detomo branding
+│   └── assets/                  # Bundled frontend assets
+│
+├── src/
+│   ├── __init__.py
+│   └── detomo_vanna.py          # Custom Vanna class (TASK 02)
+│
+├── scripts/
+│   ├── train_chinook.py         # Training script (TASK 04)
+│   └── verify_db.py             # Database verification utility
+│
+├── training_data/               # Training data files (TASK 03)
+│   └── chinook/
+│       ├── ddl/                 # DDL files (*.sql)
+│       ├── documentation/       # Markdown docs (*.md)
+│       └── questions/           # Q&A JSON files (*.json)
+│
+├── detomo_vectordb/             # ChromaDB storage (auto-created by Vanna)
+│
+└── tests/                       # All test files
+    ├── __init__.py
+    ├── unit/                    # Unit tests (TASK 09)
+    │   ├── test_agent_endpoint.py
+    │   ├── test_detomo_vanna.py
+    │   └── test_cache.py
+    └── integration/             # Integration tests (TASK 10)
+        ├── test_training.py
+        ├── test_api_core.py
+        ├── test_api_extended.py
+        └── test_full_flow.py
+```
+
+---
+
+## RESOURCES
+
+### Documentation Links
+- **Vanna AI Docs**: https://vanna.ai/docs/
+- **Claude Agent SDK**: https://github.com/anthropics/claude-agent-sdk
+- **Anthropic API**: https://docs.anthropic.com/
+- **ChromaDB Docs**: https://docs.trychroma.com/
+- **Flask Docs**: https://flask.palletsprojects.com/
+- **Plotly Docs**: https://plotly.com/python/
+
+### Reference Repositories
+- **vanna-flask**: https://github.com/vanna-ai/vanna-flask
+- **Chinook Database**: https://github.com/lerocha/chinook-database
+
+### Internal References
+- **PRD**: [docs/PRD.md](docs/PRD.md)
+- **Task Master**: [TASK_MASTER.md](TASK_MASTER.md)
+- **Task Files**: [tasks/](tasks/)
+
+---
+
+## FINAL NOTES
+
+### Best Practices
+1. **Read before coding**: Always read the task file completely before starting
+2. **Test frequently**: Run tests after each significant change
+3. **Commit often**: Use git commits to save progress incrementally
+4. **Ask questions**: If task requirements are unclear, ask for clarification
+5. **Document decisions**: Add comments explaining why, not just what
+
+### Success Metrics
+- Code coverage ≥ 80%
+- All tests passing
+- SQL accuracy ≥ 85%
+- Response time < 5s (p95)
+- No critical bugs
+
+### Getting Help
+If you encounter issues not covered in this guide:
+1. Check the specific task file for task-related guidance
+2. Review PRD for architectural decisions
+3. Check TASK_MASTER.md for dependencies
+4. Review completed task files for implementation patterns
+5. Consult external documentation (Vanna, Claude, Flask)
+
+---
+
+**Good luck with the implementation!**
+
+Remember: Quality over speed. Take time to write clean, tested, documented code.
+
+---
+
+**Last Updated**: 2025-10-26

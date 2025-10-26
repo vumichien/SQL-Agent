@@ -1,463 +1,437 @@
 # TASK MASTER - Detomo SQL AI
 
-**Project**: Detomo SQL AI
-**Version**: 1.0
-**Start Date**: 2025-10-25
-**Target Completion**: 8 weeks
+**Project**: Detomo SQL AI v2.0 (Vanna + Claude Agent SDK)
+**PRD Version**: 2.0
+**Last Updated**: 2025-10-26
 
 ---
 
-## Project Overview
+## OVERVIEW
 
-Detomo SQL AI is an AI-powered Text-to-SQL application using Claude Agent SDK and Vanna AI to convert natural language (Japanese/English) to SQL queries with auto-generated visualizations.
+This task master tracks the complete implementation of Detomo SQL AI, a Text-to-SQL application using Vanna AI framework with Claude Agent SDK as the LLM endpoint.
 
-**Tech Stack**: Claude Agent SDK, Vanna AI, ChromaDB/PGVector, PostgreSQL (Chinook), Flask, Python 3.10+
+**Technology Stack**:
+- RAG Framework: Vanna AI
+- LLM Backend: Claude Agent SDK (HTTP endpoint)
+- LLM Model: Claude Sonnet 4.5
+- Vector DB: ChromaDB
+- Target DB: SQLite (Chinook)
+- API: Flask
+- Frontend: React/Vue (Vanna-Flask pattern)
 
 ---
 
-## Overall Progress
+## TASK CHECKLIST
 
-**Total Tasks**: 12
-**Completed**: 5/12 (42%)
-**In Progress**: 0/12
-**Not Started**: 7/12
-**Blocked**: 0/12
+### Phase 1: Core Backend Setup
+
+#### ⬜ TASK 01: Claude Agent Endpoint Server
+**Status**: Not Started
+**File**: [tasks/TASK_01_claude_agent_endpoint.md](tasks/TASK_01_claude_agent_endpoint.md)
+**Estimated Time**: 4-6 hours
+**Dependencies**: None
+
+**Deliverables**:
+- [ ] `claude_agent_server.py` implemented
+- [ ] `/generate` endpoint working
+- [ ] `/health` endpoint working
+- [ ] Error handling implemented
+- [ ] Tested with curl/Postman
+- [ ] Unit tests: `tests/unit/test_agent_endpoint.py`
+
+**Success Criteria**:
+- Server runs on http://localhost:8000
+- Can receive prompt and return SQL text
+- Response time < 3s
+
+---
+
+#### ⬜ TASK 02: Vanna Custom Class Implementation
+**Status**: Not Started
+**File**: [tasks/TASK_02_vanna_custom_class.md](tasks/TASK_02_vanna_custom_class.md)
+**Estimated Time**: 6-8 hours
+**Dependencies**: TASK 01 (Claude Agent endpoint must be running)
+
+**Deliverables**:
+- [ ] `src/detomo_vanna.py` created
+- [ ] `ClaudeAgentChat` class implemented
+- [ ] `DetomoVanna` class implemented
+- [ ] Integration with Claude Agent SDK tested
+- [ ] Unit tests: `tests/unit/test_detomo_vanna.py`
+
+**Success Criteria**:
+- Vanna can call Claude Agent SDK successfully
+- `submit_prompt()` works correctly
+- RAG retrieval integrated with LLM calls
+
+---
+
+### Phase 2: Training Data & Knowledge Base
+
+#### ⬜ TASK 03: Training Data Preparation
+**Status**: Not Started
+**File**: [tasks/TASK_03_training_data_preparation.md](tasks/TASK_03_training_data_preparation.md)
+**Estimated Time**: 8-10 hours
+**Dependencies**: None (can be done in parallel with TASK 01-02)
+
+**Deliverables**:
+- [ ] Folder structure created: `training_data/chinook/{ddl,documentation,questions}/`
+- [ ] DDL files for all Chinook tables (11 tables)
+- [ ] Documentation files for tables (EN/JP)
+- [ ] Q&A JSON files with 50+ examples (EN/JP)
+- [ ] README.md in training_data folder
+
+**Success Criteria**:
+- At least 50 Q&A pairs covering various query types
+- Bilingual support (English + Japanese)
+- Well-documented schemas
+
+---
+
+#### ⬜ TASK 04: Training Script
+**Status**: Not Started
+**File**: [tasks/TASK_04_training_script.md](tasks/TASK_04_training_script.md)
+**Estimated Time**: 4-6 hours
+**Dependencies**: TASK 02 (DetomoVanna class), TASK 03 (Training data)
+
+**Deliverables**:
+- [ ] `scripts/train_chinook.py` created
+- [ ] Script loads DDL files
+- [ ] Script loads documentation
+- [ ] Script loads Q&A pairs
+- [ ] Verification function implemented
+- [ ] Integration tests: `tests/integration/test_training.py`
+
+**Success Criteria**:
+- All training data loaded successfully to ChromaDB
+- Can verify training data count
+- Script is idempotent (can re-run safely)
+
+---
+
+### Phase 3: API Layer (Core)
+
+#### ⬜ TASK 05: Flask API Core Endpoints
+**Status**: Not Started
+**File**: [tasks/TASK_05_flask_api_core.md](tasks/TASK_05_flask_api_core.md)
+**Estimated Time**: 6-8 hours
+**Dependencies**: TASK 02 (DetomoVanna), TASK 04 (Training data loaded)
+
+**Deliverables**:
+- [ ] `app.py` created with Flask setup
+- [ ] `/api/v0/query` endpoint implemented
+- [ ] `/api/v0/train` endpoint implemented
+- [ ] `/api/v0/health` endpoint implemented
+- [ ] CORS configured
+- [ ] Integration tests: `tests/integration/test_api_core.py`
+
+**Success Criteria**:
+- API runs on http://localhost:5000
+- Can query natural language → get SQL results
+- Can add training data via API
+
+---
+
+#### ⬜ TASK 06: Cache Implementation
+**Status**: Not Started
+**File**: [tasks/TASK_06_cache_implementation.md](tasks/TASK_06_cache_implementation.md)
+**Estimated Time**: 3-4 hours
+**Dependencies**: None (can be done in parallel)
+
+**Deliverables**:
+- [ ] `cache.py` created
+- [ ] `MemoryCache` class implemented
+- [ ] All cache methods working (set, get, get_all, delete)
+- [ ] Unit tests: `tests/unit/test_cache.py`
+
+**Success Criteria**:
+- Cache can store query state (question, sql, df, fig)
+- Can generate unique IDs
+- All methods have 100% test coverage
+
+---
+
+#### ⬜ TASK 07: Flask API Extended (Vanna-Flask Pattern)
+**Status**: Not Started
+**File**: [tasks/TASK_07_flask_api_extended.md](tasks/TASK_07_flask_api_extended.md)
+**Estimated Time**: 8-10 hours
+**Dependencies**: TASK 05 (Core API), TASK 06 (Cache)
+
+**Deliverables**:
+- [ ] Update `app.py` with 11 vanna-flask endpoints
+- [ ] All endpoints from PRD Section 5.3 implemented
+- [ ] Cache integration working
+- [ ] CSV download functionality
+- [ ] Integration tests: `tests/integration/test_api_extended.py`
+
+**Success Criteria**:
+- All 11 endpoints working:
+  1. `/api/v0/generate_questions`
+  2. `/api/v0/generate_sql`
+  3. `/api/v0/run_sql`
+  4. `/api/v0/generate_plotly_figure`
+  5. `/api/v0/generate_followup_questions`
+  6. `/api/v0/load_question`
+  7. `/api/v0/get_question_history`
+  8. `/api/v0/get_training_data`
+  9. `/api/v0/train`
+  10. `/api/v0/remove_training_data`
+  11. `/api/v0/download_csv`
+- Cache-based workflow functional
+
+---
+
+### Phase 4: Frontend UI
+
+#### ⬜ TASK 08: Frontend Setup (Vanna-Flask UI)
+**Status**: Not Started
+**File**: [tasks/TASK_08_frontend_setup.md](tasks/TASK_08_frontend_setup.md)
+**Estimated Time**: 12-16 hours
+**Dependencies**: TASK 07 (Extended API endpoints)
+
+**Deliverables**:
+- [ ] `static/index.html` created
+- [ ] `static/detomo_logo.svg` added
+- [ ] Frontend SPA built (React/Vue or fork vanna-flask)
+- [ ] Chat interface implemented
+- [ ] SQL results display with syntax highlighting
+- [ ] Plotly visualization rendering
+- [ ] Query history sidebar
+- [ ] Training data management UI
+- [ ] Dark mode support
+- [ ] Bilingual support (EN/JP)
+- [ ] Manual testing checklist completed
+
+**Success Criteria**:
+- UI accessible at http://localhost:5000
+- Can input NL question → see SQL → see results → see chart
+- All UI components functional
+- Detomo branding applied
+
+---
+
+### Phase 5: Testing & Quality Assurance
+
+#### ⬜ TASK 09: Unit Testing
+**Status**: Not Started
+**File**: [tasks/TASK_09_testing_unit.md](tasks/TASK_09_testing_unit.md)
+**Estimated Time**: 6-8 hours
+**Dependencies**: TASK 01-07 (All components implemented)
+
+**Deliverables**:
+- [ ] Complete unit tests for all modules
+- [ ] Test coverage ≥ 80%
+- [ ] All tests passing
+- [ ] Coverage report generated
+
+**Test Files**:
+- [ ] `tests/unit/test_agent_endpoint.py`
+- [ ] `tests/unit/test_detomo_vanna.py`
+- [ ] `tests/unit/test_cache.py`
+
+**Success Criteria**:
+- pytest runs successfully
+- Coverage ≥ 80%
+- No critical bugs
+
+---
+
+#### ⬜ TASK 10: Integration Testing
+**Status**: Not Started
+**File**: [tasks/TASK_10_testing_integration.md](tasks/TASK_10_testing_integration.md)
+**Estimated Time**: 8-10 hours
+**Dependencies**: TASK 01-08 (All components + Frontend)
+
+**Deliverables**:
+- [ ] End-to-end query flow tests
+- [ ] API endpoint integration tests
+- [ ] Training pipeline tests
+- [ ] All tests passing
+
+**Test Files**:
+- [ ] `tests/integration/test_training.py`
+- [ ] `tests/integration/test_api_core.py`
+- [ ] `tests/integration/test_api_extended.py`
+- [ ] `tests/integration/test_full_flow.py`
+
+**Success Criteria**:
+- Full query flow works end-to-end
+- All API endpoints tested
+- Training → Query → Visualization works
+
+---
+
+#### ⬜ TASK 11: Optimization & QA
+**Status**: Not Started
+**File**: [tasks/TASK_11_optimization_qa.md](tasks/TASK_11_optimization_qa.md)
+**Estimated Time**: 10-12 hours
+**Dependencies**: TASK 10 (All tests passing)
+
+**Deliverables**:
+- [ ] SQL accuracy testing with 50+ queries
+- [ ] Performance benchmarking
+- [ ] Accuracy report (target ≥85%)
+- [ ] Performance report (target <5s p95)
+- [ ] Bug fixes implemented
+- [ ] Prompt optimization done
+
+**Success Criteria**:
+- SQL accuracy ≥ 85%
+- Response time < 5s (p95)
+- No critical bugs
+- Performance benchmarks documented
+
+---
+
+### Phase 6: Documentation & Deployment
+
+#### ⬜ TASK 12: Documentation
+**Status**: Not Started
+**File**: [tasks/TASK_12_documentation.md](tasks/TASK_12_documentation.md)
+**Estimated Time**: 6-8 hours
+**Dependencies**: TASK 11 (All implementation complete)
+
+**Deliverables**:
+- [ ] `docs/ARCHITECTURE.md` created
+- [ ] `docs/API_DOCUMENTATION.md` created
+- [ ] `docs/DEPLOYMENT.md` created
+- [ ] `README.md` updated
+- [ ] All code comments reviewed
+
+**Success Criteria**:
+- Complete architecture documentation
+- API docs with examples
+- Deployment guide with step-by-step instructions
+- README with quick start guide
+
+---
+
+## PROGRESS SUMMARY
+
+### Overall Status
+- **Total Tasks**: 12
+- **Completed**: 0
+- **In Progress**: 0
+- **Not Started**: 12
+- **Overall Progress**: 0%
+
+### Phase Breakdown
+| Phase | Tasks | Status |
+|-------|-------|--------|
+| Phase 1: Core Backend | TASK 01-02 | ⬜ Not Started |
+| Phase 2: Training Data | TASK 03-04 | ⬜ Not Started |
+| Phase 3: API Layer | TASK 05-07 | ⬜ Not Started |
+| Phase 4: Frontend | TASK 08 | ⬜ Not Started |
+| Phase 5: Testing & QA | TASK 09-11 | ⬜ Not Started |
+| Phase 6: Documentation | TASK 12 | ⬜ Not Started |
+
+---
+
+## DEPENDENCIES GRAPH
 
 ```
-Progress: [████████░░░░░░░░░░░░] 42%
+TASK 01 (Claude Agent Endpoint)
+    ↓
+TASK 02 (Vanna Custom Class) ←─────┐
+    ↓                               │
+TASK 04 (Training Script) ←─ TASK 03 (Training Data)
+    ↓
+TASK 05 (Flask API Core)
+    ↓
+TASK 06 (Cache) ──→ TASK 07 (Flask API Extended)
+                         ↓
+                    TASK 08 (Frontend)
+                         ↓
+                    TASK 09 (Unit Tests)
+                         ↓
+                    TASK 10 (Integration Tests)
+                         ↓
+                    TASK 11 (Optimization & QA)
+                         ↓
+                    TASK 12 (Documentation)
 ```
 
 ---
 
-## Phase Summary
+## TIMELINE ESTIMATE
 
-| Phase | Tasks | Estimate | Status | Progress |
-|-------|-------|----------|--------|----------|
-| Phase 1: Foundation | 4 tasks | 30 hours | Completed | 100% |
-| Phase 2: API Development | 1 task | 16 hours | Completed | 100% |
-| Phase 3: Frontend | 1 task | 24 hours | Not Started | 0% |
-| Phase 4: Testing & Optimization | 4 tasks | 44 hours | Not Started | 0% |
-| Phase 5: Deployment | 1 task | 16 hours | Not Started | 0% |
-| Phase 6: Polish & Launch | 1 task | 16 hours | Not Started | 0% |
-| **TOTAL** | **12 tasks** | **146 hours** | | **33%** |
-
----
-
-## Task List
-
-### 🔴 PHASE 1: FOUNDATION (Week 1-2)
-**Goal**: Setup backend infrastructure and training data
-
-#### ✅ Task 01: Verify Chinook Database
-- **File**: [tasks/TASK_01_setup_chinook_database.md](tasks/TASK_01_setup_chinook_database.md)
-- **Priority**: 🔴 HIGH
-- **Assignee**: Backend Developer
-- **Estimate**: 30 minutes ⚡ (Updated: SQLite instead of PostgreSQL)
-- **Status**: ✅ Completed
-- **Dependencies**: None
-- **Deliverables**:
-  - ✅ Chinook SQLite database verified (data/chinook.db)
-  - ✅ All 11 tables confirmed with data
-  - ✅ Connection test scripts passing
-  - ✅ .env file with DB_PATH configuration
-
-**Completion**: ☑ 100%
-**Completed Date**: 2025-10-25
-**Notes**: SQLite database verified with 11 tables, 15,617 total rows. All queries working correctly.
-
-**Note**: Database type changed from PostgreSQL to SQLite for simpler setup.
+| Phase | Duration | Tasks |
+|-------|----------|-------|
+| Phase 1 | 1-2 days | TASK 01-02 |
+| Phase 2 | 2-3 days | TASK 03-04 |
+| Phase 3 | 2-3 days | TASK 05-07 |
+| Phase 4 | 2-3 days | TASK 08 |
+| Phase 5 | 3-4 days | TASK 09-11 |
+| Phase 6 | 1 day | TASK 12 |
+| **Total** | **11-18 days** | 12 tasks |
 
 ---
 
-#### ✅ Task 02: Create Training Data Files
-- **File**: [tasks/TASK_02_create_training_data.md](tasks/TASK_02_create_training_data.md)
-- **Priority**: 🔴 HIGH
-- **Assignee**: Data Engineer / AI Engineer
-- **Estimate**: 16 hours
-- **Status**: ✅ Completed
-- **Dependencies**: Task 01
-- **Deliverables**:
-  - ✅ 11 DDL files + 1 relationships file (12 total)
-  - ✅ 10 documentation files + 1 business rules (11 total)
-  - ✅ 4 Q&A JSON files (70 Q&A pairs total)
-  - ✅ All files UTF-8 encoded
+## SUCCESS CRITERIA (MVP)
 
-**Completion**: ☑ 100%
-**Completed Date**: 2025-10-25
-**Notes**: Created 12 DDL files, 11 documentation files, and 70 Q&A pairs (20 basic, 15 aggregation, 15 join, 20 Japanese queries). All JSON files validated successfully.
+From PRD Section 8.1:
 
----
+### Core Functionality
+- [ ] Natural language to SQL works via Vanna + Claude Agent SDK
+- [ ] SQL execution returns correct results
+- [ ] Basic visualization (Vanna's Plotly)
+- [ ] Training data loaded in ChromaDB
 
-#### ✅ Task 03: Implement DetomoVanna Class
-- **File**: [tasks/TASK_03_implement_detomo_vanna.md](tasks/TASK_03_implement_detomo_vanna.md)
-- **Priority**: 🔴 HIGH
-- **Assignee**: AI Engineer
-- **Estimate**: 8 hours
-- **Status**: ✅ Completed
-- **Dependencies**: Task 01, Task 02
-- **Deliverables**:
-  - ✅ src/detomo_vanna_dev.py (Development)
-  - ✅ src/detomo_vanna_prod.py (Production)
-  - ✅ src/config.py (Configuration)
-  - ✅ src/claude_agent_wrapper.py (Claude SDK wrapper)
-  - ✅ requirements.txt
-  - ✅ Unit tests passing
-
-**Completion**: ☑ 100%
-**Completed Date**: 2025-10-26
-**Notes**: Implemented both dev and prod classes adapted for SQLite. Virtual environment created with `uv venv`. All tests passing (3/3 successful, 1 skipped due to missing API key). ChromaDB telemetry errors can be ignored.
-
----
-
-#### ✅ Task 04: Training Script Implementation
-- **File**: [tasks/TASK_04_training_script.md](tasks/TASK_04_training_script.md)
-- **Priority**: 🔴 HIGH
-- **Assignee**: AI Engineer
-- **Estimate**: 4 hours
-- **Status**: ✅ Completed
-- **Dependencies**: Task 02, Task 03
-- **Deliverables**:
-  - ✅ scripts/train_chinook.py
-  - ✅ scripts/reset_training.py
-  - ✅ scripts/check_training.py
-  - ✅ Vector database populated (93 items)
-
-**Completion**: ☑ 100%
-**Completed Date**: 2025-10-26
-**Notes**: Training completed successfully with 93 items (12 DDL, 11 documentation, 70 Q&A pairs). Vector database created at ./detomo_vectordb. All training scripts working correctly.
-
----
-
-### 🟡 PHASE 2: API DEVELOPMENT (Week 3)
-**Goal**: Build REST API endpoints
-
-#### ✅ Task 05: Flask API Development
-- **File**: [tasks/TASK_05_flask_api.md](tasks/TASK_05_flask_api.md)
-- **Priority**: 🔴 HIGH
-- **Assignee**: Backend Developer
-- **Estimate**: 16 hours
-- **Status**: ✅ Completed
-- **Dependencies**: Task 03, Task 04
-- **Deliverables**:
-  - ✅ app.py with 8 API endpoints
-  - ✅ Backend abstraction layer (Claude Agent SDK + Anthropic API)
-  - ✅ API documentation (API_DOCUMENTATION.md)
-  - ✅ Backend switching documentation (BACKEND_SWITCHING.md)
-  - ✅ Error handling & logging middleware
-  - ✅ API tests (14 tests, all passing)
-  - ✅ Backend switching tests (8 tests, all passing)
-
-**Completion**: ☑ 100%
-**Completed Date**: 2025-10-26
-**Notes**: Implemented modern Flask API with backend abstraction layer supporting both Claude Agent SDK and Anthropic API. Created 8 RESTful endpoints (health, generate_sql, run_sql, ask, generate_plotly_figure, get_training_data, train, remove_training_data). Implemented comprehensive error handling, logging, and CORS support. All 22 tests passing. Backend switching works seamlessly via environment variable.
-
-**Key Features**:
-- ✅ Backend abstraction layer for easy switching
-- ✅ Claude Agent SDK backend (default)
-- ✅ Anthropic API backend (fallback)
-- ✅ Automatic backend detection and fallback
-- ✅ Comprehensive API documentation
-- ✅ Error handling with proper HTTP status codes
-- ✅ Logging to file and console
-- ✅ Test coverage for all endpoints
-- ✅ Backend switching tests
-
-**Files Created**:
-- app.py - Main Flask application
-- backend/llm/base.py - Backend abstraction base class
-- backend/llm/claude_agent_backend.py - Claude Agent SDK implementation
-- backend/llm/anthropic_api_backend.py - Anthropic API implementation
-- backend/llm/factory.py - Backend factory and auto-detection
-- api/routes.py - API route handlers (8 endpoints)
-- api/errors.py - Error handling middleware
-- tests/api/test_api_endpoints.py - API endpoint tests
-- tests/api/test_backend_switching.py - Backend switching tests
-- test_app_structure.py - Structure validation script
-- API_DOCUMENTATION.md - Complete API documentation
-- BACKEND_SWITCHING.md - Backend switching guide
-
----
-
-### 🟢 PHASE 3: FRONTEND DEVELOPMENT (Week 4-5)
-**Goal**: Customize UI with Detomo branding
-
-#### ✅ Task 06: UI Customization
-- **File**: [tasks/TASK_06_ui_customization.md](tasks/TASK_06_ui_customization.md)
-- **Priority**: 🟡 MEDIUM
-- **Assignee**: Frontend Developer
-- **Estimate**: 24 hours
-- **Status**: ⏸️ Not Started
-- **Dependencies**: Task 05
-- **Deliverables**:
-  - ✅ Detomo-branded UI
-  - ✅ Chat interface
-  - ✅ Admin panel
-  - ✅ Japanese language support
-  - ✅ Mobile responsive
-
-**Completion**: ☐ 0%
-
----
-
-### 🔵 PHASE 4: TESTING & OPTIMIZATION (Week 6)
-**Goal**: Quality assurance and performance tuning
-
-#### ✅ Task 07: Testing & QA
-- **File**: [tasks/TASK_07_testing_qa.md](tasks/TASK_07_testing_qa.md)
-- **Priority**: 🔴 HIGH
-- **Assignee**: QA Engineer / AI Engineer
-- **Estimate**: 16 hours
-- **Status**: ⏸️ Not Started
-- **Dependencies**: Task 05, Task 06
-- **Deliverables**:
-  - ✅ 50+ SQL accuracy tests (≥85% accuracy)
-  - ✅ Performance test report
-  - ✅ Load testing results (100 users)
-  - ✅ Bug fixes completed
-
-**Completion**: ☐ 0%
-
----
-
-#### ✅ Task 08: Visualization Enhancement
-- **File**: [tasks/TASK_08_visualization.md](tasks/TASK_08_visualization.md)
-- **Priority**: 🟡 MEDIUM
-- **Assignee**: Frontend Developer
-- **Estimate**: 8 hours
-- **Status**: ⏸️ Not Started
-- **Dependencies**: Task 06
-- **Deliverables**:
-  - ✅ Custom chart templates
-  - ✅ Export functionality (PNG, SVG)
-  - ✅ Interactive Plotly charts
-
-**Completion**: ☐ 0%
-
----
-
-#### ✅ Task 09: Analytics Dashboard
-- **File**: [tasks/TASK_09_analytics_dashboard.md](tasks/TASK_09_analytics_dashboard.md)
-- **Priority**: 🟡 MEDIUM
-- **Assignee**: Full Stack Developer
-- **Estimate**: 12 hours
-- **Status**: ⏸️ Not Started
-- **Dependencies**: Task 05, Task 06
-- **Deliverables**:
-  - ✅ Query metrics tracking
-  - ✅ Usage statistics
-  - ✅ Performance dashboard
-  - ✅ Error logs viewer
-
-**Completion**: ☐ 0%
-
----
-
-#### ✅ Task 10: Documentation
-- **File**: [tasks/TASK_10_documentation.md](tasks/TASK_10_documentation.md)
-- **Priority**: 🟡 MEDIUM
-- **Assignee**: Technical Writer / Developer
-- **Estimate**: 8 hours
-- **Status**: ⏸️ Not Started
-- **Dependencies**: All previous tasks
-- **Deliverables**:
-  - ✅ User guide (EN & JP)
-  - ✅ API documentation
-  - ✅ Deployment guide
-  - ✅ Troubleshooting guide
-
-**Completion**: ☐ 0%
-
----
-
-### 🟣 PHASE 5: DEPLOYMENT (Week 7)
-**Goal**: Production deployment
-
-#### ✅ Task 11: Deployment
-- **File**: [tasks/TASK_11_deployment.md](tasks/TASK_11_deployment.md)
-- **Priority**: 🔴 HIGH
-- **Assignee**: DevOps Engineer
-- **Estimate**: 16 hours
-- **Status**: ⏸️ Not Started
-- **Dependencies**: Task 07 (testing completed)
-- **Deliverables**:
-  - ✅ Docker containers
-  - ✅ CI/CD pipeline
-  - ✅ Production environment setup
-  - ✅ Monitoring & alerting
-
-**Completion**: ☐ 0%
-
----
-
-### ⚪ PHASE 6: POLISH & LAUNCH (Week 8)
-**Goal**: Final touches and launch
-
-#### ✅ Task 12: Advanced Features
-- **File**: [tasks/TASK_12_advanced_features.md](tasks/TASK_12_advanced_features.md)
-- **Priority**: 🟢 LOW
-- **Assignee**: Full Stack Developer
-- **Estimate**: 16 hours
-- **Status**: ⏸️ Not Started
-- **Dependencies**: All core features complete
-- **Deliverables**:
-  - ✅ Query history
-  - ✅ Saved queries
-  - ✅ Query templates
-  - ✅ Multi-user support (optional)
-
-**Completion**: ☐ 0%
-
----
-
-## Critical Path
-
-```mermaid
-graph LR
-    T01[Task 01<br/>Setup DB] --> T02[Task 02<br/>Training Data]
-    T02 --> T03[Task 03<br/>DetomoVanna]
-    T03 --> T04[Task 04<br/>Training Script]
-    T04 --> T05[Task 05<br/>Flask API]
-    T05 --> T06[Task 06<br/>UI]
-    T06 --> T07[Task 07<br/>Testing]
-    T07 --> T11[Task 11<br/>Deployment]
-    T11 --> T12[Task 12<br/>Advanced Features]
-
-    style T01 fill:#ff6b6b
-    style T02 fill:#ff6b6b
-    style T03 fill:#ff6b6b
-    style T04 fill:#ff6b6b
-    style T05 fill:#ff6b6b
-    style T07 fill:#ff6b6b
-    style T11 fill:#ff6b6b
-```
-
-**Critical Path Tasks**: T01 → T02 → T03 → T04 → T05 → T06 → T07 → T11
-
----
-
-## Success Metrics
-
-### MVP Requirements (Launch Criteria)
-- [ ] SQL accuracy ≥ 75%
-- [ ] Response time < 10s (p95)
-- [ ] Clean branded UI
-- [ ] Japanese & English support
-- [ ] Chinook database fully loaded
-- [ ] ≥ 50 Q&A training pairs
+### Quality Metrics
+- [ ] SQL accuracy ≥ 75% (MVP) / ≥ 85% (V1.0)
+- [ ] Response time < 10s (MVP) / < 5s (V1.0)
 - [ ] No critical bugs
 
-### V1.0 Success Criteria
-- [ ] SQL accuracy ≥ 85%
-- [ ] Response time < 5s (p95)
-- [ ] User satisfaction ≥ 4/5
-- [ ] Support 100+ query patterns
-- [ ] 99% uptime
-- [ ] 100 concurrent users supported
+### API
+- [ ] `/api/v0/query` endpoint functional
+- [ ] Claude Agent SDK endpoint running
+- [ ] Health check endpoints
+
+### Data
+- [ ] Chinook database connected via Vanna
+- [ ] ≥ 50 Q&A training pairs loaded
+- [ ] All DDL and docs loaded
 
 ---
 
-## Risk Dashboard
+## NOTES
 
-| Risk | Impact | Probability | Mitigation | Status |
-|------|--------|-------------|------------|--------|
-| Claude API costs too high | 🔴 High | 🟡 Medium | Aggressive caching, rate limiting | ⚠️ Monitor |
-| SQL accuracy < 85% | 🔴 High | 🟡 Medium | More training data, iterative refinement | ⚠️ Monitor |
-| Performance issues | 🟡 Medium | 🔴 High | Result pagination, query timeout | ⚠️ Monitor |
-| Database security | 🔴 High | 🟢 Low | Read-only user, SQL injection prevention | ✅ OK |
+### Context Management
+- Monitor token usage during implementation
+- Create new chat session if context < 20% remaining
+- Save progress to files before switching context
 
----
+### Testing Strategy
+- Write tests alongside implementation (TDD approach)
+- Run tests after each task completion
+- Maintain ≥80% code coverage
 
-## Weekly Status Updates
-
-### Week 1 (2025-10-25 to 2025-10-31)
-**Planned**: Tasks 01, 02
-**Actual**: -
-**Status**: Not Started
-**Blockers**: None
-**Next Week**: Complete foundation tasks
-
-### Week 2 (2025-11-01 to 2025-11-07)
-**Planned**: Tasks 03, 04
-**Actual**: -
-**Status**: Not Started
-**Blockers**: None
-**Next Week**: -
-
-[Continue for all 8 weeks...]
+### Documentation
+- Update this TASK_MASTER.md after each task completion
+- Keep detailed notes in individual task files
+- Document all issues and solutions
 
 ---
 
-## Team Assignments
+## RISK MITIGATION
 
-| Role | Team Member | Tasks Assigned | Status |
-|------|-------------|----------------|--------|
-| Backend Developer | TBD | T01, T05 | Not Started |
-| Data Engineer | TBD | T02 | Not Started |
-| AI Engineer | TBD | T03, T04, T07 | Not Started |
-| Frontend Developer | TBD | T06, T08 | Not Started |
-| Full Stack Developer | TBD | T09, T12 | Not Started |
-| Technical Writer | TBD | T10 | Not Started |
-| DevOps Engineer | TBD | T11 | Not Started |
-| QA Engineer | TBD | T07 | Not Started |
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| Claude API costs too high | High | Add caching in agent endpoint, rate limiting |
+| Agent SDK endpoint downtime | High | Add health checks, auto-restart, fallback |
+| SQL accuracy < 85% | High | More training data, prompt engineering |
+| ChromaDB performance issues | Medium | Optimize embedding model, index tuning |
+| Frontend complexity | Medium | Use vanna-flask as base, minimal customization |
 
 ---
 
-## Quick Start Guide
+## REFERENCES
 
-### For Team Members
-
-1. **Read PRD**: Start with [PRD.md](PRD.md)
-2. **Review Task Master**: This file (TASK_MASTER.md)
-3. **Check Your Assigned Task**: See individual task files in `tasks/` folder
-4. **Follow CLAUDE.md**: Use [CLAUDE.md](CLAUDE.md) for execution guidance
-5. **Update Status**: Keep task status updated in this file
-
-### For Claude Code Assistant
-
-**See**: [CLAUDE.md](CLAUDE.md) for detailed instructions on how to execute each task.
+- **PRD**: [docs/PRD.md](docs/PRD.md)
+- **Claude Setup Guide**: [CLAUDE.md](CLAUDE.md)
+- **Task Files**: [tasks/](tasks/)
 
 ---
 
-## Change Log
-
-| Date | Version | Changes | Author |
-|------|---------|---------|--------|
-| 2025-10-25 | 1.0 | Initial TASK_MASTER created | Claude |
-
----
-
-## Notes
-
-- Update task completion percentages daily
-- Mark blockers immediately
-- Update risk dashboard weekly
-- Review critical path weekly
-- Conduct phase retrospectives
-
----
-
-## Legend
-
-**Priority**:
-- 🔴 HIGH - Critical path, must complete
-- 🟡 MEDIUM - Important, flexible timing
-- 🟢 LOW - Nice to have, can defer
-
-**Status**:
-- ⏸️ Not Started
-- 🏃 In Progress
-- ⏳ Blocked
-- ✅ Completed
-- ✔️ Verified
-
-**Completion**:
-- ☐ 0% - Not started
-- ◔ 25% - Started
-- ◑ 50% - Half done
-- ◕ 75% - Nearly done
-- ☑ 100% - Complete
-
----
-
-**Last Updated**: 2025-10-25
-**Next Review**: 2025-11-01
+**Last Updated**: 2025-10-26
+**Next Review**: After each task completion
