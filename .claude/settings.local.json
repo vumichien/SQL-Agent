@@ -4,7 +4,13 @@
       "Bash(mkdir:*)",
       "Bash(sqlite3:*)",
       "Bash(python:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(dir:*)",
+      "Bash(uv venv:*)",
+      "Bash(source .venv/Scripts/activate)",
+      "Bash(PYTHONPATH=. python:*)",
+      "Bash(touch:*)",
+      "Bash(pytest:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,9 +1,83 @@
 # CLAUDE.md - Instructions for Claude Code Assistant
 
 **Project**: Detomo SQL AI
-**Version**: 1.1
-**Date**: 2025-10-25
+**Version**: 1.2
+**Date**: 2025-10-26
 **Database**: SQLite (data/chinook.db)
+
+---
+
+## 📁 File Organization Rules
+
+**IMPORTANT**: Follow these rules strictly when creating or organizing files.
+
+### Root Directory (Only 3 Core Files)
+```
+SQL-Agent/
+├── README.md          # Project overview and quick start
+├── TASK_MASTER.md     # Project progress tracker
+└── CLAUDE.md          # This file - Instructions for Claude
+```
+
+**Rule**: Keep root clean! Only these 3 files + PRD.md allowed in root.
+
+### All Documentation → `docs/`
+
+**Rule**: ALL documentation files created during development must go to `docs/` with appropriate subdirectory:
+
+```
+docs/
+├── api/               # API documentation
+│   ├── API_DOCUMENTATION.md
+│   └── BACKEND_SWITCHING.md
+├── guides/            # User guides and tutorials
+│   └── QUICKSTART_API.md
+└── development/       # Development documentation
+    ├── TASK_XX_SUMMARY.md        # Task completion summaries
+    ├── PROJECT_STRUCTURE.md       # Detailed structure docs
+    └── REORGANIZATION_SUMMARY.md  # Change logs
+```
+
+### Scripts → `scripts/`
+
+**Rule**: All utility scripts go to `scripts/`:
+- Training scripts (train_*.py)
+- Verification scripts (verify_*.py, check_*.py)
+- Database scripts (reset_*.py)
+- Any automation scripts
+
+### Tests → `tests/`
+
+**Rule**: Organize tests by type:
+```
+tests/
+├── unit/          # Unit tests (individual components)
+├── integration/   # Integration tests (components together)
+└── e2e/          # End-to-end tests (future)
+```
+
+### When Creating New Files
+
+1. **Documentation** → Always create in `docs/` with appropriate subdirectory
+2. **Scripts** → Always create in `scripts/`
+3. **Tests** → Create in `tests/unit/` or `tests/integration/`
+4. **Source Code** → Create in `src/`, `api/`, or `backend/`
+
+### Examples
+
+✅ **Correct**:
+- Task summary → `docs/development/TASK_06_SUMMARY.md`
+- API guide → `docs/api/ENDPOINTS.md`
+- Verification script → `scripts/verify_api.py`
+- Unit test → `tests/unit/test_config.py`
+
+❌ **Wrong**:
+- `TASK_06_SUMMARY.md` (root)
+- `API_GUIDE.md` (root)
+- `verify_api.py` (root)
+- `test_something.py` (root)
+
+**Remember**: Clean root = Professional project!
 
 ---
 
@@ -78,7 +152,7 @@ When you say **"start"**, Claude will:
 **Database Type**: SQLite (Updated from PostgreSQL)
 **Location**: `data/chinook.db`
 **Total Tasks**: 12
-**Completed**: 0/12 (0%)
+**Completed**: 2/12 (17%)
 **Current Phase**: Phase 1 - Foundation
 
 **Key Changes**:
@@ -86,6 +160,49 @@ When you say **"start"**, Claude will:
 - ✅ Database already exists at data/chinook.db
 - ✅ Task 01 reduced from 2h to 30min
 - ✅ Table names: lowercase (albums, customers, invoice_items)
+- ✅ Using `uv` for virtual environment management
+
+---
+
+## 🔧 Setup Virtual Environment
+
+This project uses `uv` for fast and efficient Python environment management.
+
+### Initial Setup
+```bash
+# Create virtual environment
+uv venv
+
+# Activate virtual environment
+# On Windows (Git Bash):
+source .venv/Scripts/activate
+
+# On Windows (PowerShell):
+.venv\Scripts\Activate.ps1
+
+# On Linux/Mac:
+source .venv/bin/activate
+
+# Install dependencies
+uv pip install -r requirements.txt
+```
+
+### Running the Project
+Always activate the virtual environment before running any Python scripts:
+```bash
+# Activate
+source .venv/Scripts/activate  # Windows Git Bash
+# or
+source .venv/bin/activate       # Linux/Mac
+
+# Run tests
+PYTHONPATH=. python tests/test_detomo_vanna.py
+
+# Run training scripts (later)
+python scripts/train_chinook.py
+```
+
+**Note**: The `.venv/` directory is already in `.gitignore` and should not be committed.
 
 ---
 
