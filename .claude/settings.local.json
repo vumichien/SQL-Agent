@@ -10,7 +10,18 @@
       "Bash(source .venv/Scripts/activate)",
       "Bash(PYTHONPATH=. python:*)",
       "Bash(touch:*)",
-      "Bash(pytest:*)"
+      "Bash(pytest:*)",
+      "Bash(source .venv/bin/activate)",
+      "Bash(uv pip install:*)",
+      "Bash(curl:*)",
+      "Bash(uv pip:*)",
+      "Bash(for f in training_data/chinook/questions/*.json)",
+      "Bash(do echo \"$f:\")",
+      "Bash(done)",
+      "Bash(PYTHONPATH=. pytest:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []

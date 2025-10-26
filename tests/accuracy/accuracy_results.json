@@ -1,0 +1,320 @@
+{
+  "summary": {
+    "total": 20,
+    "passed": 20,
+    "failed": 0,
+    "accuracy_rate": 100.0,
+    "avg_response_time": 4.697532141208649,
+    "target_met": true
+  },
+  "results": [
+    {
+      "id": 1,
+      "question": "How many customers are there?",
+      "category": "simple_count",
+      "difficulty": "easy",
+      "expected_keywords": [
+        "SELECT",
+        "COUNT",
+        "Customer"
+      ],
+      "generated_sql": "SELECT COUNT(*) FROM customers",
+      "is_accurate": true,
+      "response_time": 5.268576145172119
+    },
+    {
+      "id": 2,
+      "question": "How many tracks are there?",
+      "category": "simple_count",
+      "difficulty": "easy",
+      "expected_keywords": [
+        "SELECT",
+        "COUNT",
+        "Track"
+      ],
+      "generated_sql": "SELECT COUNT(*) FROM tracks",
+      "is_accurate": true,
+      "response_time": 3.1402649879455566
+    },
+    {
+      "id": 3,
+      "question": "List all customers from USA",
+      "category": "filter",
+      "difficulty": "easy",
+      "expected_keywords": [
+        "SELECT",
+        "Customer",
+        "Country",
+        "USA"
+      ],
+      "generated_sql": "SELECT * FROM customers WHERE Country = 'USA'",
+      "is_accurate": true,
+      "response_time": 4.93110990524292
+    },
+    {
+      "id": 4,
+      "question": "Show all albums by AC/DC",
+      "category": "join_filter",
+      "difficulty": "medium",
+      "expected_keywords": [
+        "SELECT",
+        "Album",
+        "Artist",
+        "AC/DC"
+      ],
+      "generated_sql": "SELECT al.Title as Album FROM albums al JOIN artists ar ON al.ArtistId = ar.ArtistId WHERE ar.Name = 'AC/DC'",
+      "is_accurate": true,
+      "response_time": 3.9708750247955322
+    },
+    {
+      "id": 5,
+      "question": "What is the total revenue?",
+      "category": "aggregation",
+      "difficulty": "easy",
+      "expected_keywords": [
+        "SELECT",
+        "SUM",
+        "Total",
+        "Invoice"
+      ],
+      "generated_sql": "SELECT SUM(Total) as TotalRevenue FROM invoices",
+      "is_accurate": true,
+      "response_time": 5.0628180503845215
+    },
+    {
+      "id": 6,
+      "question": "Show top 5 customers by total spending",
+      "category": "aggregation_ranking",
+      "difficulty": "medium",
+      "expected_keywords": [
+        "SELECT",
+        "Customer",
+        "SUM",
+        "ORDER BY",
+        "LIMIT"
+      ],
+      "generated_sql": "SELECT c.FirstName, c.LastName, SUM(i.Total) as TotalSpent FROM customers c JOIN invoices i ON c.CustomerId = i.CustomerId GROUP BY c.CustomerId, c.FirstName, c.LastName ORDER BY TotalSpent DESC LIMIT 5",
+      "is_accurate": true,
+      "response_time": 4.2012939453125
+    },
+    {
+      "id": 7,
+      "question": "How many albums does each artist have?",
+      "category": "group_by",
+      "difficulty": "medium",
+      "expected_keywords": [
+        "SELECT",
+        "Artist",
+        "COUNT",
+        "Album",
+        "GROUP BY"
+      ],
+      "generated_sql": "SELECT ar.Name as Artist, COUNT(al.AlbumId) as AlbumCount FROM artists ar LEFT JOIN albums al ON ar.ArtistId = al.ArtistId GROUP BY ar.ArtistId, ar.Name ORDER BY AlbumCount DESC",
+      "is_accurate": true,
+      "response_time": 5.308145999908447
+    },
+    {
+      "id": 8,
+      "question": "What are the top 10 most expensive tracks?",
+      "category": "ranking",
+      "difficulty": "easy",
+      "expected_keywords": [
+        "SELECT",
+        "Track",
+        "UnitPrice",
+        "ORDER BY",
+        "LIMIT"
+      ],
+      "generated_sql": "SELECT Name, UnitPrice, Composer, Milliseconds \nFROM tracks \nORDER BY UnitPrice DESC \nLIMIT 10",
+      "is_accurate": true,
+      "response_time": 5.3749189376831055
+    },
+    {
+      "id": 9,
+      "question": "Which genre has the most tracks?",
+      "category": "aggregation_ranking",
+      "difficulty": "medium",
+      "expected_keywords": [
+        "SELECT",
+        "Genre",
+        "COUNT",
+        "Track",
+        "GROUP BY",
+        "ORDER BY"
+      ],
+      "generated_sql": "SELECT g.Name as Genre, COUNT(t.TrackId) as TrackCount FROM genres g LEFT JOIN tracks t ON g.GenreId = t.GenreId GROUP BY g.GenreId, g.Name ORDER BY TrackCount DESC LIMIT 1",
+      "is_accurate": true,
+      "response_time": 3.8168082237243652
+    },
+    {
+      "id": 10,
+      "question": "List all employees and their managers",
+      "category": "self_join",
+      "difficulty": "medium",
+      "expected_keywords": [
+        "SELECT",
+        "Employee",
+        "ReportsTo"
+      ],
+      "generated_sql": "SELECT e.FirstName || ' ' || e.LastName as Employee, m.FirstName || ' ' || m.LastName as Manager FROM employees e LEFT JOIN employees m ON e.ReportsTo = m.EmployeeId",
+      "is_accurate": true,
+      "response_time": 5.22219705581665
+    },
+    {
+      "id": 11,
+      "question": "What is the average track length?",
+      "category": "aggregation",
+      "difficulty": "easy",
+      "expected_keywords": [
+        "SELECT",
+        "AVG",
+        "Milliseconds",
+        "Track"
+      ],
+      "generated_sql": "SELECT AVG(Milliseconds / 60000.0) as AvgMinutes FROM tracks",
+      "is_accurate": true,
+      "response_time": 5.5104429721832275
+    },
+    {
+      "id": 12,
+      "question": "Show revenue by country",
+      "category": "group_by_aggregation",
+      "difficulty": "medium",
+      "expected_keywords": [
+        "SELECT",
+        "Country",
+        "SUM",
+        "Invoice",
+        "GROUP BY"
+      ],
+      "generated_sql": "SELECT BillingCountry, SUM(Total) as Revenue FROM invoices GROUP BY BillingCountry ORDER BY Revenue DESC",
+      "is_accurate": true,
+      "response_time": 3.7112619876861572
+    },
+    {
+      "id": 13,
+      "question": "Which customer spent the most money?",
+      "category": "aggregation_ranking",
+      "difficulty": "medium",
+      "expected_keywords": [
+        "SELECT",
+        "Customer",
+        "SUM",
+        "ORDER BY",
+        "LIMIT"
+      ],
+      "generated_sql": "SELECT c.FirstName, c.LastName, SUM(i.Total) as TotalSpent FROM customers c JOIN invoices i ON c.CustomerId = i.CustomerId GROUP BY c.CustomerId, c.FirstName, c.LastName ORDER BY TotalSpent DESC LIMIT 1",
+      "is_accurate": true,
+      "response_time": 4.901057004928589
+    },
+    {
+      "id": 14,
+      "question": "List all tracks longer than 5 minutes",
+      "category": "filter",
+      "difficulty": "easy",
+      "expected_keywords": [
+        "SELECT",
+        "Track",
+        "Milliseconds",
+        "WHERE"
+      ],
+      "generated_sql": "SELECT Name, ROUND(Milliseconds / 60000.0, 2) as Minutes FROM tracks WHERE Milliseconds > 300000 ORDER BY Milliseconds DESC",
+      "is_accurate": true,
+      "response_time": 4.017260789871216
+    },
+    {
+      "id": 15,
+      "question": "How many invoices were created in 2013?",
+      "category": "date_filter",
+      "difficulty": "medium",
+      "expected_keywords": [
+        "SELECT",
+        "COUNT",
+        "Invoice",
+        "2013"
+      ],
+      "generated_sql": "SELECT COUNT(*) FROM invoices WHERE strftime('%Y', InvoiceDate) = '2013'",
+      "is_accurate": true,
+      "response_time": 5.582406044006348
+    },
+    {
+      "id": 16,
+      "question": "Show the total sales for each employee",
+      "category": "join_aggregation",
+      "difficulty": "hard",
+      "expected_keywords": [
+        "SELECT",
+        "Employee",
+        "SUM",
+        "Invoice",
+        "GROUP BY"
+      ],
+      "generated_sql": "SELECT e.FirstName, e.LastName, SUM(i.Total) as TotalSales \nFROM employees e \nJOIN customers c ON e.EmployeeId = c.SupportRepId \nJOIN invoices i ON c.CustomerId = i.CustomerId \nGROUP BY e.EmployeeId, e.FirstName, e.LastName \nORDER BY TotalSales DESC",
+      "is_accurate": true,
+      "response_time": 4.668420076370239
+    },
+    {
+      "id": 17,
+      "question": "What are the 5 longest tracks?",
+      "category": "ranking",
+      "difficulty": "easy",
+      "expected_keywords": [
+        "SELECT",
+        "Track",
+        "Milliseconds",
+        "ORDER BY",
+        "LIMIT"
+      ],
+      "generated_sql": "SELECT t.Name, ar.Name as Artist, t.Milliseconds FROM tracks t JOIN albums al ON t.AlbumId = al.AlbumId JOIN artists ar ON al.ArtistId = ar.ArtistId ORDER BY t.Milliseconds DESC LIMIT 5",
+      "is_accurate": true,
+      "response_time": 5.123875141143799
+    },
+    {
+      "id": 18,
+      "question": "List customers who have no invoices",
+      "category": "outer_join",
+      "difficulty": "hard",
+      "expected_keywords": [
+        "SELECT",
+        "Customer",
+        "LEFT JOIN",
+        "WHERE",
+        "NULL"
+      ],
+      "generated_sql": "SELECT c.CustomerId, c.FirstName, c.LastName, c.Email \nFROM customers c \nLEFT JOIN invoices i ON c.CustomerId = i.CustomerId \nWHERE i.InvoiceId IS NULL",
+      "is_accurate": true,
+      "response_time": 5.785208702087402
+    },
+    {
+      "id": 19,
+      "question": "顧客は何人いますか？",
+      "category": "simple_count_japanese",
+      "difficulty": "easy",
+      "expected_keywords": [
+        "SELECT",
+        "COUNT",
+        "Customer"
+      ],
+      "generated_sql": "SELECT COUNT(*) FROM customers",
+      "is_accurate": true,
+      "response_time": 3.6085879802703857
+    },
+    {
+      "id": 20,
+      "question": "最も売上が高い国はどこですか？",
+      "category": "aggregation_ranking_japanese",
+      "difficulty": "medium",
+      "expected_keywords": [
+        "SELECT",
+        "Country",
+        "SUM",
+        "Invoice",
+        "ORDER BY",
+        "LIMIT"
+      ],
+      "generated_sql": "SELECT BillingCountry, SUM(Total) as Revenue FROM invoices GROUP BY BillingCountry ORDER BY Revenue DESC LIMIT 1",
+      "is_accurate": true,
+      "response_time": 4.745113849639893
+    }
+  ]
+}

@@ -561,9 +561,9 @@ SQL-Agent/
 │   ├── TASK_02_vanna_custom_class.md
 │   ├── TASK_03_training_data_preparation.md
 │   ├── TASK_04_training_script.md
-│   ├── TASK_05_flask_api_core.md
+│   ├── TASK_05_fastapi_core.md
 │   ├── TASK_06_cache_implementation.md
-│   ├── TASK_07_flask_api_extended.md
+│   ├── TASK_07_fastapi_extended.md
 │   ├── TASK_08_frontend_setup.md
 │   ├── TASK_09_testing_unit.md
 │   ├── TASK_10_testing_integration.md

@@ -1,0 +1,144 @@
+[
+  {
+    "id": 1,
+    "question": "How many customers are there?",
+    "expected_keywords": ["SELECT", "COUNT", "Customer"],
+    "category": "simple_count",
+    "difficulty": "easy"
+  },
+  {
+    "id": 2,
+    "question": "How many tracks are there?",
+    "expected_keywords": ["SELECT", "COUNT", "Track"],
+    "category": "simple_count",
+    "difficulty": "easy"
+  },
+  {
+    "id": 3,
+    "question": "List all customers from USA",
+    "expected_keywords": ["SELECT", "Customer", "Country", "USA"],
+    "category": "filter",
+    "difficulty": "easy"
+  },
+  {
+    "id": 4,
+    "question": "Show all albums by AC/DC",
+    "expected_keywords": ["SELECT", "Album", "Artist", "AC/DC"],
+    "category": "join_filter",
+    "difficulty": "medium"
+  },
+  {
+    "id": 5,
+    "question": "What is the total revenue?",
+    "expected_keywords": ["SELECT", "SUM", "Total", "Invoice"],
+    "category": "aggregation",
+    "difficulty": "easy"
+  },
+  {
+    "id": 6,
+    "question": "Show top 5 customers by total spending",
+    "expected_keywords": ["SELECT", "Customer", "SUM", "ORDER BY", "LIMIT"],
+    "category": "aggregation_ranking",
+    "difficulty": "medium"
+  },
+  {
+    "id": 7,
+    "question": "How many albums does each artist have?",
+    "expected_keywords": ["SELECT", "Artist", "COUNT", "Album", "GROUP BY"],
+    "category": "group_by",
+    "difficulty": "medium"
+  },
+  {
+    "id": 8,
+    "question": "What are the top 10 most expensive tracks?",
+    "expected_keywords": ["SELECT", "Track", "UnitPrice", "ORDER BY", "LIMIT"],
+    "category": "ranking",
+    "difficulty": "easy"
+  },
+  {
+    "id": 9,
+    "question": "Which genre has the most tracks?",
+    "expected_keywords": ["SELECT", "Genre", "COUNT", "Track", "GROUP BY", "ORDER BY"],
+    "category": "aggregation_ranking",
+    "difficulty": "medium"
+  },
+  {
+    "id": 10,
+    "question": "List all employees and their managers",
+    "expected_keywords": ["SELECT", "Employee", "ReportsTo"],
+    "category": "self_join",
+    "difficulty": "medium"
+  },
+  {
+    "id": 11,
+    "question": "What is the average track length?",
+    "expected_keywords": ["SELECT", "AVG", "Milliseconds", "Track"],
+    "category": "aggregation",
+    "difficulty": "easy"
+  },
+  {
+    "id": 12,
+    "question": "Show revenue by country",
+    "expected_keywords": ["SELECT", "Country", "SUM", "Invoice", "GROUP BY"],
+    "category": "group_by_aggregation",
+    "difficulty": "medium"
+  },
+  {
+    "id": 13,
+    "question": "Which customer spent the most money?",
+    "expected_keywords": ["SELECT", "Customer", "SUM", "ORDER BY", "LIMIT"],
+    "category": "aggregation_ranking",
+    "difficulty": "medium"
+  },
+  {
+    "id": 14,
+    "question": "List all tracks longer than 5 minutes",
+    "expected_keywords": ["SELECT", "Track", "Milliseconds", "WHERE"],
+    "category": "filter",
+    "difficulty": "easy"
+  },
+  {
+    "id": 15,
+    "question": "How many invoices were created in 2013?",
+    "expected_keywords": ["SELECT", "COUNT", "Invoice", "2013"],
+    "category": "date_filter",
+    "difficulty": "medium"
+  },
+  {
+    "id": 16,
+    "question": "Show the total sales for each employee",
+    "expected_keywords": ["SELECT", "Employee", "SUM", "Invoice", "GROUP BY"],
+    "category": "join_aggregation",
+    "difficulty": "hard"
+  },
+  {
+    "id": 17,
+    "question": "What are the 5 longest tracks?",
+    "expected_keywords": ["SELECT", "Track", "Milliseconds", "ORDER BY", "LIMIT"],
+    "category": "ranking",
+    "difficulty": "easy"
+  },
+  {
+    "id": 18,
+    "question": "List customers who have no invoices",
+    "expected_keywords": ["SELECT", "Customer", "LEFT JOIN", "WHERE", "NULL"],
+    "category": "outer_join",
+    "difficulty": "hard"
+  },
+  {
+    "id": 19,
+    "question": "顧客は何人いますか？",
+    "expected_keywords": ["SELECT", "COUNT", "Customer"],
+    "category": "simple_count_japanese",
+    "difficulty": "easy",
+    "language": "ja"
+  },
+  {
+    "id": 20,
+    "question": "最も売上が高い国はどこですか？",
+    "expected_keywords": ["SELECT", "Country", "SUM", "Invoice", "ORDER BY", "LIMIT"],
+    "category": "aggregation_ranking_japanese",
+    "difficulty": "medium",
+    "language": "ja"
+  }
+]

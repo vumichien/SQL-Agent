@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Detomo SQL AI - Natural Language to SQL Query Interface" />
+    <title>Detomo SQL AI</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Plotly for visualizations -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="/static/css/styles.css">
+
+    <!-- Favicon (using SVG logo as fallback) -->
+    <link rel="icon" type="image/svg+xml" href="/static/detomo_logo.svg">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="/static/detomo_logo.svg" alt="Detomo Logo" height="50">
+                </div>
+                <div>
+                    <button id="theme-toggle" class="theme-toggle">
+                        🌙 Dark
+                    </button>
+                    <button id="language-toggle" class="language-toggle">
+                        🇯🇵 日本語
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Query History -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title" id="history-title">Query History</h3>
+                    <div id="history-container">
+                        <!-- History items will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Training Data Info -->
+                <div class="sidebar-section training-section">
+                    <h3 class="sidebar-title" id="training-title">Training Data</h3>
+                    <p style="font-size: 14px; color: var(--text-secondary);">
+                        Training data is managed via API endpoints.
+                    </p>
+                </div>
+            </aside>
+
+            <!-- Main Chat Area -->
+            <main class="chat-container">
+                <!-- Messages -->
+                <div id="messages-container" class="messages-container">
+                    <!-- Messages will be rendered here -->
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-container">
+                    <input
+                        type="text"
+                        id="question-input"
+                        class="question-input"
+                        placeholder="Ask a question about the database..."
+                        autocomplete="off"
+                    />
+                    <button id="send-button" class="send-button">
+                        Send
+                    </button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 20px; color: var(--text-secondary); font-size: 14px;">
+        <p>Detomo SQL AI v2.0 | Powered by Vanna AI + Claude Agent SDK</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/components.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

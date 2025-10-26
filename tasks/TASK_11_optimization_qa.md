@@ -15,7 +15,7 @@ SQL accuracy testing, performance benchmarking, and optimization.
 
 ## OBJECTIVES
 
-1. SQL accuracy testing with 50+ queries
+1. SQL accuracy testing with around 20 queries
 2. Performance benchmarking
 3. Accuracy report (target ≥85%)
 4. Performance report (target <5s p95)

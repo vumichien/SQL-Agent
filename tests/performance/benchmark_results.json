@@ -1,0 +1,108 @@
+{
+  "summary": {
+    "total_queries": 15,
+    "successful": 15,
+    "failed": 0,
+    "min_time": 3.51524019241333,
+    "max_time": 5.535223007202148,
+    "avg_time": 4.567971086502075,
+    "median_time": 4.589166879653931,
+    "p50": 4.589166879653931,
+    "p95": 5.535223007202148,
+    "p99": 5.535223007202148,
+    "target_p95": 5.0,
+    "target_met": false
+  },
+  "results": [
+    {
+      "question": "How many customers?",
+      "sql": "SELECT COUNT(*) FROM customers",
+      "response_time": 5.535223007202148,
+      "success": true
+    },
+    {
+      "question": "How many tracks?",
+      "sql": "SELECT COUNT(*) FROM tracks",
+      "response_time": 3.51524019241333,
+      "success": true
+    },
+    {
+      "question": "How many albums?",
+      "sql": "SELECT COUNT(*) FROM albums",
+      "response_time": 4.589166879653931,
+      "success": true
+    },
+    {
+      "question": "Show top 10 customers by spending",
+      "sql": "SELECT c.FirstName, c.LastName, SUM(i.Total) as TotalSpent FROM customers c JOIN invoices i ON c.CustomerId = i.CustomerId GROUP BY c.CustomerId, c.FirstName, c.LastName ORDER BY TotalSpent DESC LIMIT 10",
+      "response_time": 3.988126039505005,
+      "success": true
+    },
+    {
+      "question": "What is the total revenue?",
+      "sql": "SELECT SUM(Total) as TotalRevenue FROM invoices",
+      "response_time": 4.781227111816406,
+      "success": true
+    },
+    {
+      "question": "List all albums by AC/DC",
+      "sql": "SELECT al.Title as Album FROM albums al JOIN artists ar ON al.ArtistId = ar.ArtistId WHERE ar.Name = 'AC/DC' ORDER BY al.Title",
+      "response_time": 4.224548816680908,
+      "success": true
+    },
+    {
+      "question": "How many albums does each artist have?",
+      "sql": "SELECT ar.Name as Artist, COUNT(al.AlbumId) as AlbumCount FROM artists ar LEFT JOIN albums al ON ar.ArtistId = al.ArtistId GROUP BY ar.ArtistId, ar.Name ORDER BY AlbumCount DESC",
+      "response_time": 5.37700891494751,
+      "success": true
+    },
+    {
+      "question": "Show revenue by country",
+      "sql": "SELECT BillingCountry, SUM(Total) as Revenue FROM invoices GROUP BY BillingCountry ORDER BY Revenue DESC",
+      "response_time": 4.34863805770874,
+      "success": true
+    },
+    {
+      "question": "Which genre has the most tracks?",
+      "sql": "SELECT g.Name as Genre, COUNT(t.TrackId) as TrackCount FROM genres g LEFT JOIN tracks t ON g.GenreId = t.GenreId GROUP BY g.GenreId, g.Name ORDER BY TrackCount DESC LIMIT 1",
+      "response_time": 4.18726110458374,
+      "success": true
+    },
+    {
+      "question": "List the top 5 customers by total spending",
+      "sql": "SELECT c.FirstName, c.LastName, SUM(i.Total) as TotalSpent FROM customers c JOIN invoices i ON c.CustomerId = i.CustomerId GROUP BY c.CustomerId, c.FirstName, c.LastName ORDER BY TotalSpent DESC LIMIT 5",
+      "response_time": 5.103703022003174,
+      "success": true
+    },
+    {
+      "question": "Show the total sales for each employee",
+      "sql": "SELECT e.FirstName, e.LastName, SUM(i.Total) as TotalSales\nFROM employees e\nJOIN customers c ON e.EmployeeId = c.SupportRepId\nJOIN invoices i ON c.CustomerId = i.CustomerId\nGROUP BY e.EmployeeId, e.FirstName, e.LastName\nORDER BY TotalSales DESC",
+      "response_time": 4.5913190841674805,
+      "success": true
+    },
+    {
+      "question": "List all tracks longer than 5 minutes",
+      "sql": "SELECT Name, ROUND(Milliseconds / 60000.0, 2) as Minutes FROM tracks WHERE Milliseconds > 300000 ORDER BY Milliseconds DESC",
+      "response_time": 4.331165075302124,
+      "success": true
+    },
+    {
+      "question": "How many invoices were created in 2013?",
+      "sql": "SELECT COUNT(*) FROM invoices WHERE strftime('%Y', InvoiceDate) = '2013'",
+      "response_time": 4.86873722076416,
+      "success": true
+    },
+    {
+      "question": "顧客は何人いますか？",
+      "sql": "SELECT COUNT(*) FROM customers",
+      "response_time": 4.169191837310791,
+      "success": true
+    },
+    {
+      "question": "最も売上が高い国はどこですか？",
+      "sql": "SELECT BillingCountry, SUM(Total) as Revenue FROM invoices GROUP BY BillingCountry ORDER BY Revenue DESC LIMIT 1",
+      "response_time": 4.90900993347168,
+      "success": true
+    }
+  ]
+}
