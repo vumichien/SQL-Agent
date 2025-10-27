@@ -12,6 +12,7 @@ const state = {
     isLoading: false,
     darkMode: false,
     language: 'en',
+    sidebarCollapsed: false,
 };
 
 /**
@@ -31,6 +32,14 @@ async function initApp() {
     const savedLanguage = localStorage.getItem('language') || 'en';
     state.language = savedLanguage;
     setLanguage(savedLanguage);
+
+    // Load sidebar state
+    const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+    state.sidebarCollapsed = savedSidebarState === 'true';
+    if (state.sidebarCollapsed) {
+        document.querySelector('.main-layout').classList.add('sidebar-collapsed');
+        document.getElementById('sidebar-toggle').classList.add('active');
+    }
 
     // Update UI
     updateLanguageButton();
@@ -71,6 +80,32 @@ function setupEventListeners() {
     // Language toggle button
     const languageToggle = document.getElementById('language-toggle');
     languageToggle.addEventListener('click', toggleLanguage);
+
+    // Sidebar toggle button
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    sidebarToggle.addEventListener('click', toggleSidebar);
+
+    // Training data button
+    const manageTrainingBtn = document.getElementById('manage-training-btn');
+    manageTrainingBtn.addEventListener('click', openTrainingModal);
+
+    // Training type radio buttons
+    document.querySelectorAll('input[name="train-type"]').forEach(radio => {
+        radio.addEventListener('change', handleTrainingTypeChange);
+    });
+
+    // Tab buttons
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    // Close modal on outside click
+    const modal = document.getElementById('training-modal');
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeTrainingModal();
+        }
+    });
 }
 
 /**
@@ -88,6 +123,10 @@ async function loadInitialData() {
 
         // Load query history
         await loadHistory();
+
+        // Load training data count
+        await loadTrainingData();
+        renderTrainingDataInfo();
     } catch (error) {
         console.error('Failed to load initial data:', error);
         showError('Failed to connect to the API. Please make sure the server is running.');
@@ -144,16 +183,33 @@ async function askQuestion(question) {
 
     // Render
     render();
-    scrollToBottom();
+    scrollToBottomImmediate();
 
     try {
         // Call the all-in-one query endpoint
         const response = await api.query(question);
 
-        // Add assistant message
+        // Generate follow-up questions if we have results
+        let followupQuestions = [];
+        if (response.results && response.results.length > 0) {
+            try {
+                const followupResponse = await api.generateFollowupQuestions(
+                    question,
+                    response.results
+                );
+                followupQuestions = followupResponse.questions || [];
+            } catch (error) {
+                console.warn('Failed to generate follow-up questions:', error);
+            }
+        }
+
+        // Add assistant message with follow-up questions
         state.messages.push({
             type: 'assistant',
-            data: response,
+            data: {
+                ...response,
+                followup_questions: followupQuestions,
+            },
         });
 
         // Store current query ID
@@ -173,7 +229,8 @@ async function askQuestion(question) {
     } finally {
         state.isLoading = false;
         render();
-        scrollToBottom();
+        // Delay scroll to ensure DOM is fully rendered
+        setTimeout(() => scrollToBottom(), 150);
     }
 }
 
@@ -214,7 +271,8 @@ async function loadHistoryItem(id) {
     } finally {
         state.isLoading = false;
         render();
-        scrollToBottom();
+        // Delay scroll to ensure DOM is fully rendered
+        setTimeout(() => scrollToBottom(), 150);
     }
 }
 
@@ -248,6 +306,41 @@ function downloadCSV(id) {
 }
 
 /**
+ * Provide SQL feedback (thumbs up/down)
+ */
+async function provideSQLFeedback(id, question, sql, isCorrect) {
+    try {
+        // If feedback is positive, add to training data
+        if (isCorrect) {
+            await api.train('sql', { question, sql });
+
+            // Update button visual feedback
+            const buttons = event.target.parentElement.querySelectorAll('.feedback-button');
+            buttons.forEach(btn => {
+                btn.classList.add('selected');
+                btn.disabled = true;
+            });
+
+            // Show thank you message
+            alert(t('feedbackThanks'));
+        } else {
+            // For negative feedback, we could potentially log it or ask for correction
+            // For now, just acknowledge
+            const buttons = event.target.parentElement.querySelectorAll('.feedback-button');
+            buttons.forEach(btn => {
+                btn.classList.add('selected');
+                btn.disabled = true;
+            });
+
+            alert(t('feedbackThanks') + ' We will work on improving this.');
+        }
+    } catch (error) {
+        console.error('Failed to provide feedback:', error);
+        alert('Failed to submit feedback. Please try again.');
+    }
+}
+
+/**
  * Toggle dark mode
  */
 function toggleTheme() {
@@ -273,6 +366,25 @@ function toggleLanguage() {
     localStorage.setItem('language', state.language);
     updateLanguageButton();
     render();
+}
+
+/**
+ * Toggle sidebar
+ */
+function toggleSidebar() {
+    state.sidebarCollapsed = !state.sidebarCollapsed;
+    localStorage.setItem('sidebarCollapsed', state.sidebarCollapsed);
+
+    const mainLayout = document.querySelector('.main-layout');
+    const toggleButton = document.getElementById('sidebar-toggle');
+
+    if (state.sidebarCollapsed) {
+        mainLayout.classList.add('sidebar-collapsed');
+        toggleButton.classList.add('active');
+    } else {
+        mainLayout.classList.remove('sidebar-collapsed');
+        toggleButton.classList.remove('active');
+    }
 }
 
 /**
@@ -310,9 +422,23 @@ function showError(message) {
 function scrollToBottom() {
     const messagesContainer = document.getElementById('messages-container');
     if (messagesContainer) {
-        setTimeout(() => {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }, 100);
+        // Use requestAnimationFrame for smoother scrolling
+        requestAnimationFrame(() => {
+            messagesContainer.scrollTo({
+                top: messagesContainer.scrollHeight,
+                behavior: 'smooth'
+            });
+        });
+    }
+}
+
+/**
+ * Scroll to bottom immediately (no animation)
+ */
+function scrollToBottomImmediate() {
+    const messagesContainer = document.getElementById('messages-container');
+    if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 }
 
@@ -386,13 +512,241 @@ function updateInputState() {
     }
 }
 
+/**
+ * Training Data Management Functions
+ */
+
+// Training data state
+let trainingData = [];
+
+/**
+ * Load training data
+ */
+async function loadTrainingData() {
+    try {
+        const response = await api.getTrainingData();
+        trainingData = response.training_data || [];
+        return trainingData;
+    } catch (error) {
+        console.error('Failed to load training data:', error);
+        return [];
+    }
+}
+
+/**
+ * Render training data count in sidebar
+ */
+function renderTrainingDataInfo() {
+    const container = document.getElementById('training-data-info');
+    if (container) {
+        container.innerHTML = `
+            <p style="font-size: 14px; color: var(--text-secondary);">
+                <span class="training-count">${trainingData.length}</span> items
+            </p>
+        `;
+    }
+}
+
+/**
+ * Open training modal
+ */
+function openTrainingModal() {
+    const modal = document.getElementById('training-modal');
+    modal.classList.add('active');
+    loadAndRenderTrainingData();
+}
+
+/**
+ * Close training modal
+ */
+function closeTrainingModal() {
+    const modal = document.getElementById('training-modal');
+    modal.classList.remove('active');
+}
+
+/**
+ * Load and render training data in modal
+ */
+async function loadAndRenderTrainingData() {
+    const container = document.getElementById('training-data-list');
+
+    // Show loading
+    container.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">Loading training data...</div>';
+
+    try {
+        await loadTrainingData();
+        renderTrainingDataList();
+        renderTrainingDataInfo();
+    } catch (error) {
+        console.error('Failed to load training data:', error);
+        container.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--error-color);">Failed to load training data. Please try again.</div>';
+    }
+}
+
+/**
+ * Render training data list in modal
+ */
+function renderTrainingDataList() {
+    const container = document.getElementById('training-data-list');
+
+    if (!trainingData || trainingData.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-secondary);">No training data found.</p>';
+        return;
+    }
+
+    container.innerHTML = trainingData.map(item => {
+        // Vanna returns: id, question, content, training_data_type
+        const type = item.training_data_type || 'unknown';
+
+        // For SQL type, show question + content
+        let displayContent = '';
+        if (type === 'sql' && item.question) {
+            displayContent = `<strong>Q:</strong> ${escapeHtml(item.question)}<br><strong>SQL:</strong> ${escapeHtml(item.content || '')}`;
+        } else {
+            displayContent = escapeHtml(item.content || '');
+        }
+
+        return `
+            <div class="training-data-item">
+                <div class="training-data-header">
+                    <span class="training-data-type">${escapeHtml(type)}</span>
+                    <button class="training-data-delete" onclick="deleteTrainingData('${escapeHtml(item.id)}')">
+                        🗑️ Delete
+                    </button>
+                </div>
+                <div class="training-data-content">${displayContent}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Escape HTML helper function (also available in components.js)
+ */
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+/**
+ * Add training data
+ */
+async function addTrainingData(type) {
+    try {
+        let data = {};
+
+        if (type === 'ddl') {
+            const ddl = document.getElementById('ddl-input').value.trim();
+            if (!ddl) {
+                alert('Please enter DDL');
+                return;
+            }
+            data = { ddl };
+        } else if (type === 'documentation') {
+            const documentation = document.getElementById('doc-input').value.trim();
+            if (!documentation) {
+                alert('Please enter documentation');
+                return;
+            }
+            data = { documentation };
+        } else if (type === 'sql') {
+            const question = document.getElementById('sql-question-input').value.trim();
+            const sql = document.getElementById('sql-input').value.trim();
+            if (!question || !sql) {
+                alert('Please enter both question and SQL');
+                return;
+            }
+            data = { question, sql };
+        }
+
+        await api.train(type, data);
+
+        // Clear inputs
+        if (type === 'ddl') {
+            document.getElementById('ddl-input').value = '';
+        } else if (type === 'documentation') {
+            document.getElementById('doc-input').value = '';
+        } else if (type === 'sql') {
+            document.getElementById('sql-question-input').value = '';
+            document.getElementById('sql-input').value = '';
+        }
+
+        // Reload training data
+        await loadAndRenderTrainingData();
+
+        // Switch to view tab
+        switchTab('view');
+
+        alert('Training data added successfully!');
+    } catch (error) {
+        console.error('Failed to add training data:', error);
+        alert('Failed to add training data: ' + error.message);
+    }
+}
+
+/**
+ * Delete training data
+ */
+async function deleteTrainingData(id) {
+    if (!confirm('Are you sure you want to delete this training data?')) {
+        return;
+    }
+
+    try {
+        await api.removeTrainingData(id);
+        await loadAndRenderTrainingData();
+        alert('Training data deleted successfully!');
+    } catch (error) {
+        console.error('Failed to delete training data:', error);
+        alert('Failed to delete training data: ' + error.message);
+    }
+}
+
+/**
+ * Switch tabs in modal
+ */
+function switchTab(tabName) {
+    // Update tab buttons
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.tab === tabName) {
+            btn.classList.add('active');
+        }
+    });
+
+    // Update tab content
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById(`tab-${tabName}`).classList.add('active');
+}
+
+/**
+ * Handle training type radio change
+ */
+function handleTrainingTypeChange() {
+    const selectedType = document.querySelector('input[name="train-type"]:checked').value;
+
+    document.getElementById('form-ddl').style.display = selectedType === 'ddl' ? 'flex' : 'none';
+    document.getElementById('form-documentation').style.display = selectedType === 'documentation' ? 'flex' : 'none';
+    document.getElementById('form-sql').style.display = selectedType === 'sql' ? 'flex' : 'none';
+}
+
 // Make functions globally accessible
 window.askQuestion = askQuestion;
 window.loadHistoryItem = loadHistoryItem;
 window.copyToClipboard = copyToClipboard;
 window.downloadCSV = downloadCSV;
+window.provideSQLFeedback = provideSQLFeedback;
 window.toggleTheme = toggleTheme;
 window.toggleLanguage = toggleLanguage;
+window.toggleSidebar = toggleSidebar;
+window.openTrainingModal = openTrainingModal;
+window.closeTrainingModal = closeTrainingModal;
+window.addTrainingData = addTrainingData;
+window.deleteTrainingData = deleteTrainingData;
 
 // Initialize app when DOM is ready
 if (document.readyState === 'loading') {

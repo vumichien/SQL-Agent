@@ -1,0 +1,152 @@
+{
+  "summary": {
+    "total": 20,
+    "passed": 0,
+    "failed": 20,
+    "accuracy_rate": 0.0,
+    "avg_response_time": 0.0,
+    "target_met": false
+  },
+  "results": [
+    {
+      "id": 1,
+      "question": "How many customers are there?",
+      "category": "simple_count",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10dabc5f0>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 2,
+      "question": "How many tracks are there?",
+      "category": "simple_count",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10dae74a0>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 3,
+      "question": "List all customers from USA",
+      "category": "filter",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10db0c590>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 4,
+      "question": "Show all albums by AC/DC",
+      "category": "join_filter",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10db0c4a0>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 5,
+      "question": "What is the total revenue?",
+      "category": "aggregation",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10dae7140>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 6,
+      "question": "Show top 5 customers by total spending",
+      "category": "aggregation_ranking",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10dae61e0>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 7,
+      "question": "How many albums does each artist have?",
+      "category": "group_by",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10db0d730>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 8,
+      "question": "What are the top 10 most expensive tracks?",
+      "category": "ranking",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10db0c4a0>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 9,
+      "question": "Which genre has the most tracks?",
+      "category": "aggregation_ranking",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10dae7410>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 10,
+      "question": "List all employees and their managers",
+      "category": "self_join",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10db0e000>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 11,
+      "question": "What is the average track length?",
+      "category": "aggregation",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10db0d3a0>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 12,
+      "question": "Show revenue by country",
+      "category": "group_by_aggregation",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10dae6270>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 13,
+      "question": "Which customer spent the most money?",
+      "category": "aggregation_ranking",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10db0ce60>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 14,
+      "question": "List all tracks longer than 5 minutes",
+      "category": "filter",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10db0d580>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 15,
+      "question": "How many invoices were created in 2013?",
+      "category": "date_filter",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10db0ddf0>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 16,
+      "question": "Show the total sales for each employee",
+      "category": "join_aggregation",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10dae74d0>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 17,
+      "question": "What are the 5 longest tracks?",
+      "category": "ranking",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10db0d6d0>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 18,
+      "question": "List customers who have no invoices",
+      "category": "outer_join",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10db0e690>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 19,
+      "question": "顧客は何人いますか？",
+      "category": "simple_count_japanese",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10db0e3f0>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    },
+    {
+      "id": 20,
+      "question": "最も売上が高い国はどこですか？",
+      "category": "aggregation_ranking_japanese",
+      "error": "Error calling Claude Agent SDK: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /generate (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x10dae72c0>: Failed to establish a new connection: [Errno 61] Connection refused'))",
+      "is_accurate": false
+    }
+  ]
+}

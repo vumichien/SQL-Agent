@@ -129,14 +129,12 @@ class DetomoAPI {
      * Add training data
      */
     async train(trainType, data) {
-        const payload = {
-            train_type: trainType,
-        };
+        const payload = {};
 
         if (trainType === 'ddl') {
-            payload.ddl = data;
+            payload.ddl = data.ddl || data;
         } else if (trainType === 'documentation') {
-            payload.documentation = data;
+            payload.documentation = data.documentation || data;
         } else if (trainType === 'sql') {
             payload.question = data.question;
             payload.sql = data.sql;

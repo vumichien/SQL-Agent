@@ -1,43 +1,72 @@
-# Environment variables
-.env
-
-# Virtual environment
-.venv/
-venv/
-env/
-
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# ChromaDB vector database
-detomo_vectordb/
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
 
-# IDE
+# IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# OS
-.DS_Store
-Thumbs.db
+# Environment variables
+.env
+backend/.env
+frontend/.env
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
 
 # Logs
 *.log
 detomo_sql_ai.log
 
-# Distribution / packaging
-dist/
-build/
-*.egg-info/
+# OS
+.DS_Store
+Thumbs.db
 
-# Test cache
-.pytest_cache/
+# Node (for frontend)
+node_modules/
+dist/
+.nuxt/
+.output/
+frontend/dist/
+frontend/.nuxt/
+
+# Testing
 .coverage
 htmlcov/
+.pytest_cache/
+coverage/
+
+# ChromaDB
+detomo_vectordb/
+backend/detomo_vectordb/
 
 # Temporary files
 *.tmp

@@ -1,11 +1,13 @@
 # Detomo SQL AI 🤖
 
-**AI-Powered Text-to-SQL Application**
+**AI-Powered Text-to-SQL Application** - Monorepo (Backend + Vue3 Frontend)
 
 Convert natural language questions to SQL queries, execute them, and get visualizations automatically.
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-green.svg)](https://fastapi.tiangolo.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.120+-green.svg)](https://fastapi.tiangolo.com/)
+[![Vue3](https://img.shields.io/badge/Vue-3.0+-brightgreen.svg)](https://vuejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/Tests-82%20Passing-brightgreen.svg)](#testing)
 [![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen.svg)](#testing)
@@ -27,42 +29,139 @@ Convert natural language questions to SQL queries, execute them, and get visuali
 
 ---
 
+## 📁 Project Structure
+
+```
+SQL-Agent/
+├── backend/                # FastAPI Backend
+│   ├── src/               # Source code
+│   ├── tests/             # Backend tests
+│   ├── scripts/           # Training scripts
+│   ├── training_data/     # Training examples
+│   ├── data/              # Databases
+│   ├── claude_agent_server.py
+│   └── requirements.txt
+├── frontend/              # Vue3 Frontend (TASK_15)
+├── shared/                # Shared types/constants
+├── docker-compose.yml     # Development setup
+└── README.md
+```
+
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Python 3.10 or higher
-- Anthropic API key ([Get one here](https://console.anthropic.com))
+- **Python 3.10+** (for backend)
+- **Node.js 20+** (for frontend)
+- **Anthropic API key** ([Get one here](https://console.anthropic.com))
+- **Docker & Docker Compose** (optional, recommended)
 
-### Installation
+---
+
+### Option 1: Docker Compose (Recommended - Chạy cả FE và BE)
+
+**Chạy toàn bộ ứng dụng (Backend + Frontend) với 1 lệnh:**
 
 ```bash
-# Clone repository
+# 1. Clone repository
 git clone https://github.com/detomo/sql-ai.git
 cd sql-ai
 
-# Create virtual environment
+# 2. Configure backend environment
+cd backend
+cp .env.example .env
+nano .env  # Add your ANTHROPIC_API_KEY
+cd ..
+
+# 3. Start cả Backend và Frontend với Docker Compose
+docker-compose up
+
+# Hoặc chạy ngầm (background):
+docker-compose up -d
+
+# Xem logs:
+docker-compose logs -f
+
+# Dừng services:
+docker-compose down
+```
+
+**Access points:**
+- **Frontend (Vue3)**: http://localhost:5173
+- **Backend (FastAPI)**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
+
+**✨ Training data tự động load lần đầu chạy! Không cần setup thêm.**
+
+---
+
+### Option 2: Local Development (Chạy Backend và Frontend riêng)
+
+#### Backend Setup
+
+```bash
+# 1. Navigate to backend
+cd backend
+
+# 2. Create virtual environment
 python3 -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 
-# Install dependencies
-pip install uv
-uv pip install -r requirements.txt
+# 3. Install dependencies
+pip install -r requirements.txt
 
-# Configure environment
+# 4. Configure environment
 cp .env.example .env
 nano .env  # Add your ANTHROPIC_API_KEY
 
-# Download Chinook database
-mkdir -p data
-curl -o data/chinook.db https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite
-
-# Load training data
+# 5. Load training data
 python scripts/train_chinook.py
 
-# Start server
-python claude_agent_server.py
+# 6. Start backend server
+python main.py
+# Hoặc: uvicorn app.main:app --reload
 ```
+
+**Backend sẽ chạy tại**: http://localhost:8000
+
+#### Frontend Setup (Terminal mới)
+
+```bash
+# 1. Navigate to frontend
+cd frontend
+
+# 2. Install dependencies
+npm install
+
+# 3. Start development server
+npm run dev
+```
+
+**Frontend sẽ chạy tại**: http://localhost:5173
+
+---
+
+### Option 3: Production Deployment (Docker Compose Production)
+
+```bash
+# 1. Configure production environment
+cp .env.production.example .env.production
+nano .env.production  # Add production settings
+
+# 2. Build and start production containers
+docker-compose -f docker-compose.prod.yml up -d
+
+# 3. Load training data (first time)
+docker exec -it detomo-backend-prod bash
+python scripts/train_chinook.py
+exit
+```
+
+**Access points (Production):**
+- **Frontend**: http://localhost (port 80)
+- **Backend**: http://localhost:8000
+
+---
 
 ### Access Application
 
@@ -196,14 +295,17 @@ Based on comprehensive testing (TASK 11):
 ### Run Tests
 
 ```bash
+# Navigate to backend
+cd backend
+
 # Activate virtual environment
 source .venv/bin/activate
 
 # Run all tests
-pytest
+PYTHONPATH=. pytest
 
 # Run with coverage
-pytest --cov=src --cov=. --cov-report=html
+PYTHONPATH=. pytest --cov=src --cov=. --cov-report=html
 
 # View coverage report
 open htmlcov/index.html
@@ -212,7 +314,7 @@ open htmlcov/index.html
 ### Test Structure
 
 ```
-tests/
+backend/tests/
 ├── unit/                    # Unit tests (42 tests)
 │   ├── test_agent_endpoint.py    # LLM endpoint tests
 │   ├── test_detomo_vanna.py      # Vanna integration tests
@@ -236,12 +338,13 @@ tests/
 - **pandas**: Data processing
 - **Plotly**: Visualization
 
-### Frontend
-- **Vanilla JavaScript**: No framework overhead
-- **Tailwind CSS**: Utility-first styling
-- **Plotly.js**: Interactive charts
-- **Marked.js**: Markdown rendering
-- **Highlight.js**: Code syntax highlighting
+### Frontend (Migrating to Vue3 in Phase 7)
+- **Vue 3**: Modern reactive framework (TASK_15+)
+- **TypeScript**: Type safety
+- **Element Plus**: UI component library
+- **Pinia**: State management
+- **Vite**: Build tool
+- **Legacy**: Vanilla JS (currently served at /)
 
 ### Testing & DevOps
 - **pytest**: Testing framework
@@ -255,12 +358,14 @@ tests/
 
 ### Local Development
 ```bash
+cd backend
 python claude_agent_server.py
 ```
 
 ### Docker
 ```bash
-docker-compose up -d
+# From project root
+docker-compose up backend -d
 ```
 
 ### Production (Ubuntu)
@@ -284,7 +389,7 @@ See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed deployment instruction
 
 ### Environment Variables
 
-Create `.env` file:
+Create `backend/.env` file:
 
 ```bash
 # Required
@@ -305,7 +410,7 @@ LOG_LEVEL=info
 Connect to your own database:
 
 ```python
-# In claude_agent_server.py, replace:
+# In backend/claude_agent_server.py, replace:
 vn.connect_to_sqlite("data/chinook.db")
 
 # With PostgreSQL:
@@ -377,7 +482,8 @@ curl -X POST http://localhost:8000/api/v0/train \
 
 **Via Files**:
 ```bash
-# Create training data files
+# Create training data files in backend
+cd backend
 mkdir -p training_data/my_db/{ddl,documentation,questions}
 
 # Add your DDL, docs, and Q&A JSON files
@@ -452,6 +558,28 @@ black src/ tests/
 ---
 
 ## 📝 Changelog
+
+### Version 3.0.0 (2025-10-27) - In Progress
+
+**Phase 7: Frontend Migration** - Monorepo + Vue3 + TypeScript
+
+**Completed (TASK_13)**:
+- ✅ Monorepo structure created (/backend, /frontend, /shared)
+- ✅ Backend code migrated to /backend directory
+- ✅ Docker Compose configuration
+- ✅ Documentation updated
+
+**In Progress**:
+- ⏳ TASK_14: Backend refactor (clean architecture + JWT auth)
+- ⏳ TASK_15-28: Vue3 + TypeScript frontend (16 tasks)
+
+**Goals**:
+- Clean architecture for backend
+- Modern Vue3 + TypeScript frontend
+- Element Plus UI library
+- Pinia state management
+- JWT authentication
+- Comprehensive E2E testing
 
 ### Version 2.0.0 (2025-10-26)
 
@@ -558,12 +686,14 @@ If you find this project helpful, please consider giving it a star on GitHub!
 
 ## 📈 Project Status
 
-- **Version**: 2.0.0
-- **Status**: Production Ready (95/100 quality score)
-- **Tasks Completed**: 11/12 (92%)
-- **Test Coverage**: 100% (src/)
-- **Tests Passing**: 82/82
-- **Last Updated**: 2025-10-26
+- **Version**: 3.0.0 (In Progress)
+- **Status**: Phase 7 Migration - Backend Restructure Complete
+- **Tasks Completed**: 13/28 (46%)
+- **Backend Quality**: Production Ready (95/100 score)
+- **Test Coverage**: 100% (backend/src/)
+- **Tests Passing**: 82/82 (backend)
+- **Last Updated**: 2025-10-27
+- **Next Milestone**: TASK_14 (Backend Refactor)
 
 ---
 

@@ -455,125 +455,262 @@ curl -X POST https://your-domain.com/api/v0/query \
 
 ## Docker Deployment
 
-### Dockerfile
+**Version**: v3.0 (Monorepo: Backend + Vue3 Frontend)
 
-Create `Dockerfile` in project root:
+### Architecture Overview
 
-```dockerfile
-FROM python:3.10-slim
+Detomo SQL AI v3.0 uses a monorepo structure with two Docker containers:
 
-# Set working directory
-WORKDIR /app
+1. **Backend Container**: FastAPI server with Vanna AI + Claude Agent SDK
+2. **Frontend Container**: Vue3 SPA served by nginx
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+Both containers communicate via Docker network, and frontend proxies API requests to backend.
 
-# Copy requirements
-COPY requirements.txt .
+### Prerequisites
 
-# Install Python dependencies
-RUN pip install --no-cache-dir uv && \
-    uv pip install --system --no-cache-dir -r requirements.txt
+- Docker Engine 20.10+ installed
+- Docker Compose v2.0+ installed
+- Anthropic API Key
 
-# Copy application code
-COPY . .
+### Quick Start (Development)
 
-# Download Chinook database
-RUN mkdir -p data && \
-    curl -o data/chinook.db https://raw.githubusercontent.com/lerocha/chinook-database/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite
-
-# Create volume for ChromaDB
-VOLUME /app/detomo_vectordb
-
-# Expose port
-EXPOSE 8000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
-
-# Run training script on first start, then start server
-CMD python scripts/train_chinook.py && \
-    uvicorn claude_agent_server:app --host 0.0.0.0 --port 8000 --workers 4
-```
-
-### docker-compose.yml
-
-Create `docker-compose.yml`:
-
-```yaml
-version: '3.8'
-
-services:
-  detomo-sql-ai:
-    build: .
-    container_name: detomo-sql-ai
-    ports:
-      - "8000:8000"
-    environment:
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - DATABASE_PATH=data/chinook.db
-      - VECTOR_DB_PATH=./detomo_vectordb
-      - LOG_LEVEL=info
-    volumes:
-      - ./detomo_vectordb:/app/detomo_vectordb
-      - ./data:/app/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
-  # Optional: nginx reverse proxy
-  nginx:
-    image: nginx:alpine
-    container_name: detomo-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl:/etc/nginx/ssl:ro
-    depends_on:
-      - detomo-sql-ai
-    restart: unless-stopped
-```
-
-### Build and Run
+For development, use `docker-compose.yml`:
 
 ```bash
-# Build image
-docker build -t detomo-sql-ai:latest .
+# Start development environment
+docker-compose up
 
-# Run container
-docker run -d \
-  --name detomo-sql-ai \
-  -p 8000:8000 \
-  -e ANTHROPIC_API_KEY=sk-ant-your-key \
-  -v $(pwd)/detomo_vectordb:/app/detomo_vectordb \
-  detomo-sql-ai:latest
+# Backend runs on http://localhost:8000
+# Frontend runs on http://localhost:5173 (if frontend service is uncommented)
+```
 
-# Or use docker-compose
-docker-compose up -d
+### Production Deployment
+
+#### Step 1: Prepare Environment Variables
+
+Copy and configure production environment file:
+
+```bash
+cp .env.production.example .env.production
+```
+
+Edit `.env.production` and set:
+
+```bash
+# Required
+ANTHROPIC_API_KEY=sk-ant-your-production-api-key
+
+# Generate secrets with: openssl rand -hex 32
+SECRET_KEY=<generated-secret-key>
+JWT_SECRET_KEY=<generated-jwt-secret>
+
+# Update with your domain
+ALLOWED_ORIGINS=https://yourdomain.com
+
+# Optional: Model configuration
+CLAUDE_MODEL=claude-haiku-4-5-20251001
+CLAUDE_TEMPERATURE=0.1
+```
+
+#### Step 2: Build Docker Images
+
+**Option A: Build Individually**
+
+```bash
+# Build backend
+cd backend
+docker build -t detomo-backend:latest -f Dockerfile .
+
+# Build frontend
+cd ../frontend
+docker build -t detomo-frontend:latest -f Dockerfile .
+```
+
+**Option B: Build with Docker Compose**
+
+```bash
+# Build all services
+docker-compose -f docker-compose.prod.yml build
+
+# Build with no cache (fresh build)
+docker-compose -f docker-compose.prod.yml build --no-cache
+```
+
+#### Step 3: Run Production Containers
+
+**Option A: Using Docker Compose (Recommended)**
+
+```bash
+# Start all services in background
+docker-compose -f docker-compose.prod.yml up -d
 
 # View logs
-docker logs -f detomo-sql-ai
+docker-compose -f docker-compose.prod.yml logs -f
+
+# View specific service logs
+docker-compose -f docker-compose.prod.yml logs -f backend
+docker-compose -f docker-compose.prod.yml logs -f frontend
 
 # Check status
-docker ps
+docker-compose -f docker-compose.prod.yml ps
 
-# Stop container
-docker stop detomo-sql-ai
+# Stop all services
+docker-compose -f docker-compose.prod.yml down
 
-# Remove container
-docker rm detomo-sql-ai
+# Stop and remove volumes (CAUTION: deletes data)
+docker-compose -f docker-compose.prod.yml down -v
 ```
+
+**Option B: Using Docker CLI**
+
+```bash
+# Create network
+docker network create detomo-network
+
+# Create volumes
+docker volume create detomo-backend-data
+docker volume create detomo-backend-vectordb
+
+# Run backend
+docker run -d \
+  --name detomo-backend-prod \
+  --network detomo-network \
+  -p 8000:8000 \
+  -v detomo-backend-data:/app/data \
+  -v detomo-backend-vectordb:/app/detomo_vectordb \
+  --env-file .env.production \
+  --restart unless-stopped \
+  detomo-backend:latest
+
+# Run frontend
+docker run -d \
+  --name detomo-frontend-prod \
+  --network detomo-network \
+  -p 80:80 \
+  --restart unless-stopped \
+  detomo-frontend:latest
+
+# View logs
+docker logs -f detomo-backend-prod
+docker logs -f detomo-frontend-prod
+```
+
+#### Step 4: Verify Deployment
+
+```bash
+# Check backend health
+curl http://localhost:8000/api/v0/health
+
+# Expected response:
+# {"status":"healthy","timestamp":"2025-10-27T...", ...}
+
+# Check frontend
+curl http://localhost/
+
+# Expected: HTML content of Vue3 app
+
+# Test API via frontend proxy
+curl http://localhost/api/v0/health
+```
+
+#### Step 5: Load Training Data (First Time Only)
+
+```bash
+# Access backend container
+docker exec -it detomo-backend-prod bash
+
+# Inside container, run training script
+python scripts/train_chinook.py
+
+# Verify training data loaded
+python -c "from src.detomo_vanna import DetomoVanna; vn = DetomoVanna(config={'path': './detomo_vectordb'}); print(f'Training items: {len(vn.get_training_data())}')"
+
+# Exit container
+exit
+```
+
+### Production Configuration Details
+
+#### Backend Dockerfile (`backend/Dockerfile`)
+
+Multi-stage build for optimized image size:
+- **Builder stage**: Compiles dependencies
+- **Runtime stage**: Minimal image with only runtime dependencies
+- **Security**: Runs as non-root user `detomo`
+- **Workers**: 4 uvicorn workers for production
+- **Health check**: Monitors `/api/v0/health` endpoint
+
+#### Frontend Dockerfile (`frontend/Dockerfile`)
+
+Multi-stage build with nginx:
+- **Builder stage**: Builds Vue3 app with Vite
+- **Production stage**: nginx Alpine serving static files
+- **Compression**: gzip enabled for assets
+- **SPA routing**: Fallback to index.html for client-side routing
+- **API proxy**: Proxies `/api/*` requests to backend container
+
+#### Docker Compose Production (`docker-compose.prod.yml`)
+
+Features:
+- **Named volumes**: Persists database and vector store across restarts
+- **Health checks**: Monitors container health
+- **Dependencies**: Frontend waits for backend to be healthy
+- **Network**: Isolated bridge network for service communication
+- **Restart policy**: Auto-restart on failure
+
+### Maintenance Commands
+
+```bash
+# View resource usage
+docker stats detomo-backend-prod detomo-frontend-prod
+
+# Restart services
+docker-compose -f docker-compose.prod.yml restart
+
+# Update application (after git pull)
+docker-compose -f docker-compose.prod.yml build
+docker-compose -f docker-compose.prod.yml up -d
+
+# Backup vector database
+docker run --rm \
+  -v detomo-backend-vectordb:/source \
+  -v $(pwd)/backups:/backup \
+  alpine tar czf /backup/vectordb-$(date +%Y%m%d).tar.gz -C /source .
+
+# Restore vector database
+docker run --rm \
+  -v detomo-backend-vectordb:/target \
+  -v $(pwd)/backups:/backup \
+  alpine tar xzf /backup/vectordb-20251027.tar.gz -C /target
+
+# View container logs (last 100 lines)
+docker-compose -f docker-compose.prod.yml logs --tail=100
+
+# Clean up unused images and volumes
+docker system prune -a --volumes
+```
+
+### Scaling & Performance
+
+**Increase Backend Workers**:
+
+Edit `backend/Dockerfile` CMD line:
+```dockerfile
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "8"]
+```
+
+**Load Balancing** (multiple backend instances):
+
+Use docker-compose scale:
+```yaml
+# In docker-compose.prod.yml
+services:
+  backend:
+    deploy:
+      replicas: 3
+```
+
+Or use external load balancer (nginx, HAProxy, AWS ALB).
 
 ---
 

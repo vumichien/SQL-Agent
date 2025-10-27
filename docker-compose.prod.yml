@@ -1,0 +1,64 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: detomo-backend-prod
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist database and vector store
+      - backend-data:/app/data
+      - backend-vectordb:/app/detomo_vectordb
+      # Mount static files if needed
+      - ./backend/static:/app/static:ro
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - DATABASE_PATH=/app/data/chinook.db
+      - VECTOR_DB_PATH=/app/detomo_vectordb
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8000
+      - LOG_LEVEL=info
+      - CLAUDE_MODEL=${CLAUDE_MODEL:-claude-haiku-4-5-20251001}
+      - CLAUDE_TEMPERATURE=${CLAUDE_TEMPERATURE:-0.1}
+      - CLAUDE_MAX_TOKENS=${CLAUDE_MAX_TOKENS:-2048}
+    networks:
+      - detomo-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v0/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: detomo-frontend-prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - detomo-network
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  backend-data:
+    name: detomo-backend-data
+  backend-vectordb:
+    name: detomo-backend-vectordb
+
+networks:
+  detomo-network:
+    name: detomo-network
+    driver: bridge

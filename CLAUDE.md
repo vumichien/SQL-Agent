@@ -1,7 +1,7 @@
 # CLAUDE.md - Guide for Claude Code Agent
 
-**Project**: Detomo SQL AI v2.0
-**Last Updated**: 2025-10-26
+**Project**: Detomo SQL AI v3.0 (Monorepo Structure)
+**Last Updated**: 2025-10-27
 
 ---
 
@@ -37,8 +37,8 @@ ls TASK_MASTER.md CLAUDE.md tasks/ docs/PRD.md
 # Check git status (if applicable)
 git status
 
-# Verify dependencies (if requirements.txt exists)
-pip list | grep -E "vanna|flask|anthropic|claude"
+# Verify dependencies (backend)
+cd backend && uv pip list | grep -E "vanna|fastapi|anthropic" && cd ..
 ```
 
 ### 3. Find Next Task
@@ -124,12 +124,16 @@ If user confirms:
 ### Prerequisites
 
 1. **Python Version**: Python 3.10 or higher
-2. **Virtual Environment**: Use existing `.venv` in project root
+2. **Virtual Environment**: Create in `/backend` directory
 3. **Package Manager**: Use `uv pip install` for all package installations
+4. **Docker**: Optional, for containerized development
 
 ### Initial Setup Steps
 
 ```bash
+# Navigate to backend directory
+cd backend
+
 # 1. Activate virtual environment
 # On Windows:
 .venv\Scripts\activate
@@ -141,7 +145,7 @@ source .venv/bin/activate
 python --version
 # Should output: Python 3.10.x or higher
 
-# 3. Install dependencies (when requirements.txt is ready)
+# 3. Install dependencies
 uv pip install -r requirements.txt
 
 # 4. Create .env file
@@ -151,7 +155,7 @@ cp .env.example .env
 
 ### Environment Variables
 
-Create a `.env` file in the project root:
+Create a `.env` file in the `/backend` directory:
 
 ```bash
 # Anthropic API (for Claude Agent SDK server)
@@ -165,6 +169,15 @@ DATABASE_PATH=data/chinook.db
 
 # Vector Database (managed by Vanna)
 VECTOR_DB_PATH=./detomo_vectordb
+```
+
+### Docker Development (Alternative)
+
+```bash
+# From project root
+docker-compose up backend
+
+# Backend will be available at http://localhost:8000
 ```
 
 ---
@@ -200,21 +213,24 @@ When implementing each task, follow this checklist:
 
 ### Step 5: Run Tests
 ```bash
+# Navigate to backend (if not already there)
+cd backend
+
 # Run all tests
-pytest
+PYTHONPATH=. pytest
 
 # Run with coverage report
-pytest --cov=src --cov=. --cov-report=html
+PYTHONPATH=. pytest --cov=src --cov=. --cov-report=html
 
 # Run specific test file
-pytest tests/unit/test_specific.py
+PYTHONPATH=. pytest tests/unit/test_specific.py
 
 # Run with verbose output
-pytest -v
+PYTHONPATH=. pytest -v
 ```
 
 ### Step 6: Manual Testing (if applicable)
-- [ ] Start required servers (e.g., `python claude_agent_server.py`)
+- [ ] Start required servers (e.g., `cd backend && python claude_agent_server.py`)
 - [ ] Test endpoints with curl/Postman
 - [ ] Verify output matches expected behavior
 - [ ] Check logs for errors
@@ -238,6 +254,9 @@ pytest -v
 ### Development
 
 ```bash
+# Navigate to backend
+cd backend
+
 # Activate virtual environment
 .venv\Scripts\activate  # Windows
 source .venv/bin/activate  # Unix/macOS
@@ -258,23 +277,26 @@ python -c "from dotenv import load_dotenv; load_dotenv()" && python script.py
 ### Testing
 
 ```bash
+# Navigate to backend (if not already there)
+cd backend
+
 # Run all tests
-pytest
+PYTHONPATH=. pytest
 
 # Run with coverage
-pytest --cov=src --cov=. --cov-report=html
+PYTHONPATH=. pytest --cov=src --cov=. --cov-report=html
 
 # Run specific test file
-pytest tests/unit/test_cache.py
+PYTHONPATH=. pytest tests/unit/test_cache.py
 
 # Run specific test function
-pytest tests/unit/test_cache.py::test_cache_set
+PYTHONPATH=. pytest tests/unit/test_cache.py::test_cache_set
 
 # Run with verbose output
-pytest -v
+PYTHONPATH=. pytest -v
 
 # Run with print statements visible
-pytest -s
+PYTHONPATH=. pytest -s
 
 # View coverage report
 # Open htmlcov/index.html in browser
@@ -283,24 +305,31 @@ pytest -s
 ### Running Servers
 
 ```bash
-# Run Claude Agent SDK endpoint (Terminal 1)
+# Option 1: Local Development
+cd backend
 python claude_agent_server.py
 # Server runs on http://localhost:8000
 
-# Run Flask API (Terminal 2)
-python app.py
-# Server runs on http://localhost:5000
+# Option 2: Docker
+# From project root
+docker-compose up backend
+# Server runs on http://localhost:8000
 
-# Test Claude Agent endpoint
-curl -X GET http://localhost:8000/health
+# Test API health
+curl -X GET http://localhost:8000/api/v0/health
 
-# Test Flask API
-curl -X GET http://localhost:5000/api/v0/health
+# Test query endpoint
+curl -X POST http://localhost:8000/api/v0/query \
+  -H "Content-Type: application/json" \
+  -d '{"question": "How many customers?"}'
 ```
 
 ### Training & Database
 
 ```bash
+# Navigate to backend
+cd backend
+
 # Run training script
 python scripts/train_chinook.py
 
@@ -322,29 +351,37 @@ sqlite3 data/chinook.db
 
 Follow this order for task implementation (see [TASK_MASTER.md](TASK_MASTER.md) for details):
 
-### Phase 1: Core Backend Setup
-1. **TASK 01**: Claude Agent Endpoint Server
-2. **TASK 02**: Vanna Custom Class
+### Phase 1-6: Backend v2.0 (✅ Completed)
+1. **TASK 01**: Claude Agent Endpoint Server ✅
+2. **TASK 02**: Vanna Custom Class ✅
+3. **TASK 03**: Training Data Preparation ✅
+4. **TASK 04**: Training Script ✅
+5. **TASK 05**: FastAPI Core Endpoints ✅
+6. **TASK 06**: Cache Implementation ✅
+7. **TASK 07**: FastAPI Extended Endpoints ✅
+8. **TASK 08**: Frontend Setup (Vanilla JS) ✅
+9. **TASK 09**: Unit Testing ✅
+10. **TASK 10**: Integration Testing ✅
+11. **TASK 11**: Optimization & QA ✅
+12. **TASK 12**: Documentation ✅
 
-### Phase 2: Training Data & Knowledge Base
-3. **TASK 03**: Training Data Preparation (can parallel with TASK 01-02)
-4. **TASK 04**: Training Script
-
-### Phase 3: API Layer
-5. **TASK 05**: Flask API Core Endpoints
-6. **TASK 06**: Cache Implementation (can parallel with TASK 05)
-7. **TASK 07**: Flask API Extended (Vanna-Flask Pattern)
-
-### Phase 4: Frontend UI
-8. **TASK 08**: Frontend Setup
-
-### Phase 5: Testing & QA
-9. **TASK 09**: Unit Testing
-10. **TASK 10**: Integration Testing
-11. **TASK 11**: Optimization & QA
-
-### Phase 6: Documentation
-12. **TASK 12**: Documentation
+### Phase 7: Frontend Migration (v3.0)
+13. **TASK 13**: Project Restructure - Monorepo ✅
+14. **TASK 14**: Backend Refactor - Clean Architecture ⏳
+15. **TASK 15**: Vue3 + Vite + TypeScript Setup
+16. **TASK 16**: Element Plus Integration
+17. **TASK 17**: Pinia Store Setup
+18. **TASK 18**: Vue Router Setup
+19. **TASK 19**: Chat Interface Components
+20. **TASK 20**: SQL Display & Results Table
+21. **TASK 21**: Plotly Visualization Integration
+22. **TASK 22**: Query History Sidebar
+23. **TASK 23**: Training Data Management
+24. **TASK 24**: Theme & Internationalization
+25. **TASK 25**: Authentication System
+26. **TASK 26**: Frontend Testing (Vitest)
+27. **TASK 27**: E2E Testing (Playwright)
+28. **TASK 28**: Docker & Production Deployment
 
 ---
 
@@ -542,73 +579,71 @@ In the new chat session:
 ## PROJECT STRUCTURE REFERENCE
 
 ```
-SQL-Agent/
-├── .env                          # Environment variables (DO NOT COMMIT)
-├── .env.example                  # Example env file (commit this)
-├── requirements.txt              # Python dependencies
+SQL-Agent/                        # Monorepo root
 ├── CLAUDE.md                     # This file - Claude agent guide
 ├── TASK_MASTER.md                # Task tracking and progress
 ├── README.md                     # Project overview and quick start
+├── MIGRATION_PLAN_SUMMARY.md     # Phase 7 migration plan
+├── docker-compose.yml            # Development containers
+├── .gitignore                    # Updated for monorepo
 │
 ├── docs/                         # All documentation
 │   ├── PRD.md                    # Product Requirements Document
-│   ├── ARCHITECTURE.md           # System architecture (TASK 12)
-│   ├── API_DOCUMENTATION.md      # API endpoints reference (TASK 12)
-│   └── DEPLOYMENT.md             # Deployment guide (TASK 12)
+│   ├── ARCHITECTURE.md           # System architecture
+│   ├── API_DOCUMENTATION.md      # API endpoints reference
+│   ├── DEPLOYMENT.md             # Deployment guide
+│   └── QA_REPORT.md              # Testing & quality report
 │
-├── tasks/                        # Task files (implementation guides)
-│   ├── TASK_01_claude_agent_endpoint.md
-│   ├── TASK_02_vanna_custom_class.md
-│   ├── TASK_03_training_data_preparation.md
-│   ├── TASK_04_training_script.md
-│   ├── TASK_05_fastapi_core.md
-│   ├── TASK_06_cache_implementation.md
-│   ├── TASK_07_fastapi_extended.md
-│   ├── TASK_08_frontend_setup.md
-│   ├── TASK_09_testing_unit.md
-│   ├── TASK_10_testing_integration.md
-│   ├── TASK_11_optimization_qa.md
-│   └── TASK_12_documentation.md
+├── tasks/                        # Task files (28 tasks)
+│   ├── TASK_01-12_*.md           # Phase 1-6 (Completed)
+│   └── TASK_13-28_*.md           # Phase 7 (In Progress)
 │
-├── claude_agent_server.py        # Claude Agent SDK HTTP endpoint (TASK 01)
-├── app.py                        # Flask API + UI server (TASK 05, 07)
-├── cache.py                      # Memory cache for query state (TASK 06)
+├── backend/                      # FastAPI Backend
+│   ├── claude_agent_server.py    # Main FastAPI app
+│   ├── requirements.txt          # Python dependencies
+│   ├── .env                      # Environment variables (gitignored)
+│   ├── .env.example             # Example env file
+│   ├── README.md                # Backend documentation
+│   ├── Dockerfile.dev           # Development Docker image
+│   │
+│   ├── src/                     # Source code
+│   │   ├── __init__.py
+│   │   ├── detomo_vanna.py      # Vanna integration
+│   │   └── cache.py             # Cache implementation
+│   │
+│   ├── tests/                   # All tests (82 tests)
+│   │   ├── unit/                # Unit tests (42 tests)
+│   │   ├── integration/         # Integration tests (40 tests)
+│   │   ├── accuracy/            # SQL accuracy tests
+│   │   └── performance/         # Performance benchmarks
+│   │
+│   ├── scripts/                 # Utility scripts
+│   │   └── train_chinook.py     # Training data loader
+│   │
+│   ├── training_data/           # Training examples (93 items)
+│   │   └── chinook/
+│   │       ├── ddl/             # DDL files (12)
+│   │       ├── documentation/   # Table docs (11)
+│   │       └── questions/       # Q&A pairs (70)
+│   │
+│   ├── data/                    # Databases
+│   │   └── chinook.db          # SQLite sample database
+│   │
+│   └── detomo_vectordb/        # ChromaDB storage (auto-created)
 │
-├── data/
-│   └── chinook.db               # SQLite database (download separately)
+├── frontend/                    # Vue3 Frontend (TASK_15+)
+│   ├── src/                     # Vue3 source code
+│   ├── public/                  # Static assets
+│   ├── package.json             # Node dependencies
+│   └── vite.config.ts          # Vite configuration
 │
-├── static/                       # Frontend UI files (TASK 08)
-│   ├── index.html               # Main SPA entry point
-│   ├── detomo_logo.svg          # Detomo branding
-│   └── assets/                  # Bundled frontend assets
+├── shared/                      # Shared types/constants
+│   └── types/                   # TypeScript types
 │
-├── src/
-│   ├── __init__.py
-│   └── detomo_vanna.py          # Custom Vanna class (TASK 02)
-│
-├── scripts/
-│   ├── train_chinook.py         # Training script (TASK 04)
-│   └── verify_db.py             # Database verification utility
-│
-├── training_data/               # Training data files (TASK 03)
-│   └── chinook/
-│       ├── ddl/                 # DDL files (*.sql)
-│       ├── documentation/       # Markdown docs (*.md)
-│       └── questions/           # Q&A JSON files (*.json)
-│
-├── detomo_vectordb/             # ChromaDB storage (auto-created by Vanna)
-│
-└── tests/                       # All test files
-    ├── __init__.py
-    ├── unit/                    # Unit tests (TASK 09)
-    │   ├── test_agent_endpoint.py
-    │   ├── test_detomo_vanna.py
-    │   └── test_cache.py
-    └── integration/             # Integration tests (TASK 10)
-        ├── test_training.py
-        ├── test_api_core.py
-        ├── test_api_extended.py
-        └── test_full_flow.py
+└── static/                      # Legacy Vanilla JS UI (will be replaced)
+    ├── index.html               # Current frontend
+    ├── detomo_logo.svg          # Branding
+    └── js/css/                  # JS and CSS files
 ```
 
 ---

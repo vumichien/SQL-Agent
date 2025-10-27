@@ -25,6 +25,11 @@ const translations = {
         emptyStateTitle: 'Welcome to Detomo SQL AI',
         emptyStateSubtitle: 'Ask a question in natural language to query your database',
         followupQuestions: 'Follow-up Questions',
+        retry: 'Retry',
+        sqlCorrect: 'Is this SQL correct?',
+        thumbsUp: 'Yes, this SQL is correct',
+        thumbsDown: 'No, this SQL is incorrect',
+        feedbackThanks: 'Thank you for your feedback!',
     },
     ja: {
         askQuestion: 'データベースについて質問してください...',
@@ -46,6 +51,11 @@ const translations = {
         emptyStateTitle: 'Detomo SQL AIへようこそ',
         emptyStateSubtitle: '自然言語で質問してデータベースを検索してください',
         followupQuestions: 'フォローアップの質問',
+        retry: '再試行',
+        sqlCorrect: 'このSQLは正しいですか？',
+        thumbsUp: 'はい、正しいです',
+        thumbsDown: 'いいえ、間違っています',
+        feedbackThanks: 'フィードバックをありがとうございます！',
     },
 };
 
@@ -109,18 +119,29 @@ function renderUserMessage(question) {
 }
 
 /**
- * Render SQL block with copy button
+ * Render SQL block with copy button and validation feedback
  */
-function renderSQL(sql, id) {
+function renderSQL(sql, id, question) {
     return `
         <div class="sql-container">
             <div class="sql-header">
                 <div class="sql-label">${t('sql')}</div>
-                <button class="copy-button" onclick="copyToClipboard('${id}', \`${escapeHtml(sql).replace(/`/g, '\\`')}\`)">
-                    ${t('copy')}
-                </button>
+                <div class="sql-actions">
+                    <button class="copy-button" onclick="copyToClipboard('${id}', \`${escapeHtml(sql).replace(/`/g, '\\`')}\`)">
+                        ${t('copy')}
+                    </button>
+                </div>
             </div>
             <pre class="sql-code">${escapeHtml(sql)}</pre>
+            <div class="sql-feedback">
+                <span class="feedback-label">${t('sqlCorrect')}</span>
+                <button class="feedback-button feedback-positive" onclick="provideSQLFeedback('${id}', '${escapeHtml(question).replace(/'/g, "\\'")}', \`${escapeHtml(sql).replace(/`/g, '\\`')}\`, true)" title="${t('thumbsUp')}">
+                    👍
+                </button>
+                <button class="feedback-button feedback-negative" onclick="provideSQLFeedback('${id}', '${escapeHtml(question).replace(/'/g, "\\'")}', \`${escapeHtml(sql).replace(/`/g, '\\`')}\`, false)" title="${t('thumbsDown')}">
+                    👎
+                </button>
+            </div>
         </div>
     `;
 }
@@ -253,7 +274,18 @@ function renderAssistantMessage(data) {
                 </div>
                 <div class="message-content">
                     <div class="error-message">
-                        <strong>${t('error')}:</strong> ${escapeHtml(error)}
+                        <div class="error-header">
+                            <span class="error-icon">⚠️</span>
+                            <strong>${t('error')}</strong>
+                        </div>
+                        <div class="error-details">
+                            ${escapeHtml(error)}
+                        </div>
+                        ${question ? `
+                            <button class="retry-button" onclick="askQuestion('${escapeHtml(question).replace(/'/g, "\\'")}')">
+                                🔄 ${t('retry')}
+                            </button>
+                        ` : ''}
                     </div>
                 </div>
             </div>
@@ -272,7 +304,7 @@ function renderAssistantMessage(data) {
                 <span>${t('assistant')}</span>
             </div>
             <div class="message-content">
-                ${sql ? renderSQL(sql, id || 'sql') : ''}
+                ${sql ? renderSQL(sql, id || 'sql', question) : ''}
                 ${resultsData ? renderResultsTable(resultsData) : ''}
                 ${resultsData && id ? renderDownloadButton(id) : ''}
                 ${chartData ? renderChart(chartData, id || Date.now()) : ''}
@@ -293,8 +325,12 @@ function renderLoadingMessage() {
                 <span>${t('assistant')}</span>
             </div>
             <div class="message-content">
-                <div class="loading"></div>
-                <span style="margin-left: 8px;">${t('loading')}</span>
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <span>${t('loading')}</span>
+                </div>
             </div>
         </div>
     `;
