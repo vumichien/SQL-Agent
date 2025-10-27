@@ -1,8 +1,8 @@
 # TASK MASTER - Detomo SQL AI
 
-**Project**: Detomo SQL AI v2.0 (Vanna + Claude Agent SDK)
-**PRD Version**: 2.0
-**Last Updated**: 2025-10-26
+**Project**: Detomo SQL AI v3.0 (Backend + Vue3 Frontend Migration)
+**PRD Version**: 3.0
+**Last Updated**: 2025-10-27
 
 ---
 
@@ -16,8 +16,10 @@ This task master tracks the complete implementation of Detomo SQL AI, a Text-to-
 - LLM Model: Claude Sonnet 4.5
 - Vector DB: ChromaDB
 - Target DB: SQLite (Chinook)
-- API: Flask
-- Frontend: React/Vue (Vanna-Flask pattern)
+- Backend API: FastAPI (Clean Architecture)
+- Frontend: Vue3 + TypeScript + Element Plus + Pinia + Vue Router
+- Authentication: JWT-based
+- Build Tool: Vite
 
 ---
 
@@ -352,14 +354,409 @@ This task master tracks the complete implementation of Detomo SQL AI, a Text-to-
 
 ---
 
+### Phase 7: Frontend Migration (Vue3 + TypeScript)
+
+#### ⬜ TASK 13: Project Restructure - Monorepo Setup
+**Status**: Not Started
+**File**: [tasks/TASK_13_project_restructure.md](tasks/TASK_13_project_restructure.md)
+**Estimated Time**: 4-6 hours
+**Dependencies**: TASK 12 (Documentation complete)
+**Completed**: -
+
+**Deliverables**:
+- [ ] Create monorepo structure: `/backend`, `/frontend`, `/shared`
+- [ ] Move existing backend code to `/backend`
+- [ ] Setup Docker Compose for development
+- [ ] Update documentation (README, CLAUDE.md)
+- [ ] Git ignore updates
+
+**Success Criteria**:
+- ⬜ Clean folder structure
+- ⬜ Backend runs from `/backend`
+- ⬜ Docker Compose working
+- ⬜ Documentation updated
+
+---
+
+#### ⬜ TASK 14: Backend Refactor - Clean Architecture
+**Status**: Not Started
+**File**: [tasks/TASK_14_backend_refactor.md](tasks/TASK_14_backend_refactor.md)
+**Estimated Time**: 8-10 hours
+**Dependencies**: TASK 13 (Project restructure)
+**Completed**: -
+
+**Deliverables**:
+- [ ] Create `/backend/routers` (split endpoints)
+- [ ] Create `/backend/services` (business logic)
+- [ ] Create `/backend/models` (Pydantic models)
+- [ ] Create `/backend/core` (config, auth)
+- [ ] JWT authentication middleware
+- [ ] User management service
+- [ ] Update tests for new structure
+
+**Success Criteria**:
+- ⬜ Clean separation of concerns
+- ⬜ All endpoints working
+- ⬜ Authentication working
+- ⬜ Tests passing (≥80% coverage)
+
+---
+
+#### ⬜ TASK 15: Vue3 + Vite + TypeScript Setup
+**Status**: Not Started
+**File**: [tasks/TASK_15_vue3_vite_setup.md](tasks/TASK_15_vue3_vite_setup.md)
+**Estimated Time**: 4-6 hours
+**Dependencies**: TASK 13 (Monorepo structure)
+**Completed**: -
+
+**Deliverables**:
+- [ ] Initialize Vite + Vue3 + TypeScript project in `/frontend`
+- [ ] Configure TypeScript (strict mode)
+- [ ] Setup ESLint + Prettier
+- [ ] Setup Tailwind CSS (optional)
+- [ ] Create folder structure: `/composables`, `/types`, `/api`, `/stores`, `/router`, `/views`, `/components`
+- [ ] Configure environment variables
+
+**Success Criteria**:
+- ⬜ Vue3 app runs on http://localhost:5173
+- ⬜ TypeScript compilation working
+- ⬜ Hot module replacement working
+- ⬜ Build process working
+
+---
+
+#### ⬜ TASK 16: Element Plus Integration
+**Status**: Not Started
+**File**: [tasks/TASK_16_element_plus.md](tasks/TASK_16_element_plus.md)
+**Estimated Time**: 3-4 hours
+**Dependencies**: TASK 15 (Vue3 setup)
+**Completed**: -
+
+**Deliverables**:
+- [ ] Install Element Plus
+- [ ] Configure auto-import (unplugin-vue-components)
+- [ ] Setup theme customization
+- [ ] Dark mode configuration
+- [ ] Create base layout components (Header, Sidebar, Main)
+- [ ] Typography and spacing utilities
+
+**Success Criteria**:
+- ⬜ Element Plus components available
+- ⬜ Auto-import working
+- ⬜ Dark mode toggle working
+- ⬜ Base layout rendering
+
+---
+
+#### ⬜ TASK 17: Pinia Store Setup
+**Status**: Not Started
+**File**: [tasks/TASK_17_pinia_setup.md](tasks/TASK_17_pinia_setup.md)
+**Estimated Time**: 4-6 hours
+**Dependencies**: TASK 15 (Vue3 setup)
+**Completed**: -
+
+**Deliverables**:
+- [ ] Install and configure Pinia
+- [ ] Create `useAuthStore` (user, token, login/logout)
+- [ ] Create `useQueryStore` (queries, history)
+- [ ] Create `useTrainingStore` (training data)
+- [ ] Create `useUIStore` (theme, language, sidebar state)
+- [ ] TypeScript interfaces for all stores
+- [ ] Persist state with localStorage
+
+**Success Criteria**:
+- ⬜ All stores functional
+- ⬜ State persistence working
+- ⬜ TypeScript types correct
+- ⬜ Reactivity working
+
+---
+
+#### ⬜ TASK 18: Vue Router Setup
+**Status**: Not Started
+**File**: [tasks/TASK_18_vue_router.md](tasks/TASK_18_vue_router.md)
+**Estimated Time**: 3-4 hours
+**Dependencies**: TASK 17 (Pinia stores)
+**Completed**: -
+
+**Deliverables**:
+- [ ] Install and configure Vue Router
+- [ ] Create routes: `/`, `/chat`, `/history`, `/training`, `/settings`, `/login`, `/register`
+- [ ] Navigation guards (authentication check)
+- [ ] Route transitions
+- [ ] 404 page
+- [ ] Breadcrumb component
+
+**Success Criteria**:
+- ⬜ All routes working
+- ⬜ Protected routes working
+- ⬜ Navigation guards functional
+- ⬜ Smooth transitions
+
+---
+
+#### ⬜ TASK 19: Chat Interface Components
+**Status**: Not Started
+**File**: [tasks/TASK_19_chat_interface.md](tasks/TASK_19_chat_interface.md)
+**Estimated Time**: 8-10 hours
+**Dependencies**: TASK 16 (Element Plus), TASK 17 (Stores), TASK 18 (Router)
+**Completed**: -
+
+**Deliverables**:
+- [ ] Chat container layout
+- [ ] MessageList component
+- [ ] UserMessage component
+- [ ] AssistantMessage component
+- [ ] ChatInput component
+- [ ] LoadingIndicator component
+- [ ] EmptyState component
+- [ ] SuggestedQuestions component
+- [ ] Auto-scroll behavior
+- [ ] API integration
+
+**Success Criteria**:
+- ⬜ Chat interface renders correctly
+- ⬜ Can send messages
+- ⬜ Receives and displays responses
+- ⬜ Loading states working
+- ⬜ Auto-scroll working
+
+---
+
+#### ⬜ TASK 20: SQL Display & Results Table
+**Status**: Not Started
+**File**: [tasks/TASK_20_sql_results.md](tasks/TASK_20_sql_results.md)
+**Estimated Time**: 6-8 hours
+**Dependencies**: TASK 19 (Chat interface)
+**Completed**: -
+
+**Deliverables**:
+- [ ] SQLDisplay component with syntax highlighting (Shiki/Prism)
+- [ ] Copy button functionality
+- [ ] ResultsTable component (El-Table)
+- [ ] Pagination for large results
+- [ ] Sorting and filtering
+- [ ] CSV download button
+- [ ] SQL feedback buttons (thumbs up/down)
+- [ ] Empty state for no results
+
+**Success Criteria**:
+- ⬜ SQL syntax highlighting working
+- ⬜ Copy to clipboard working
+- ⬜ Results table rendering
+- ⬜ Pagination working
+- ⬜ CSV download working
+
+---
+
+#### ⬜ TASK 21: Plotly Visualization Integration
+**Status**: Not Started
+**File**: [tasks/TASK_21_plotly_viz.md](tasks/TASK_21_plotly_viz.md)
+**Estimated Time**: 4-6 hours
+**Dependencies**: TASK 20 (Results table)
+**Completed**: -
+
+**Deliverables**:
+- [ ] Install plotly.js-dist-min
+- [ ] Create PlotlyChart component
+- [ ] Responsive chart container
+- [ ] Loading state for charts
+- [ ] Error handling
+- [ ] Theme sync (dark/light mode)
+- [ ] Export chart functionality
+
+**Success Criteria**:
+- ⬜ Charts render correctly
+- ⬜ Responsive behavior working
+- ⬜ Dark mode sync working
+- ⬜ Export working
+
+---
+
+#### ⬜ TASK 22: Query History Sidebar
+**Status**: Not Started
+**File**: [tasks/TASK_22_history_sidebar.md](tasks/TASK_22_history_sidebar.md)
+**Estimated Time**: 6-8 hours
+**Dependencies**: TASK 19 (Chat interface)
+**Completed**: -
+
+**Deliverables**:
+- [ ] HistorySidebar component (El-Drawer or El-Aside)
+- [ ] HistoryList component
+- [ ] HistoryItem component
+- [ ] Search/filter functionality
+- [ ] Load history item
+- [ ] Delete history item
+- [ ] Empty state
+- [ ] Collapsible sidebar
+
+**Success Criteria**:
+- ⬜ Sidebar renders correctly
+- ⬜ History items displayed
+- ⬜ Load history working
+- ⬜ Search/filter working
+- ⬜ Delete working
+
+---
+
+#### ⬜ TASK 23: Training Data Management
+**Status**: Not Started
+**File**: [tasks/TASK_23_training_management.md](tasks/TASK_23_training_management.md)
+**Estimated Time**: 8-10 hours
+**Dependencies**: TASK 18 (Router)
+**Completed**: -
+
+**Deliverables**:
+- [ ] TrainingDataView page (`/training`)
+- [ ] TrainingDataTable component (El-Table)
+- [ ] AddTrainingModal component (El-Dialog)
+- [ ] Training form with tabs (DDL/Documentation/SQL)
+- [ ] Form validation
+- [ ] Delete confirmation
+- [ ] Pagination for large datasets
+- [ ] API integration
+
+**Success Criteria**:
+- ⬜ Training data page accessible
+- ⬜ Table displays data
+- ⬜ Add functionality working
+- ⬜ Delete working with confirmation
+- ⬜ Form validation working
+
+---
+
+#### ⬜ TASK 24: Theme & Internationalization
+**Status**: Not Started
+**File**: [tasks/TASK_24_theme_i18n.md](tasks/TASK_24_theme_i18n.md)
+**Estimated Time**: 4-6 hours
+**Dependencies**: TASK 16 (Element Plus)
+**Completed**: -
+
+**Deliverables**:
+- [ ] Install and configure vue-i18n
+- [ ] Create translation files (EN/JP)
+- [ ] Language switcher component
+- [ ] Dark mode toggle component
+- [ ] Sync with Element Plus theme
+- [ ] Persist preferences in localStorage
+- [ ] Update all components with i18n
+
+**Success Criteria**:
+- ⬜ Language switching working
+- ⬜ Dark mode toggle working
+- ⬜ Preferences persisted
+- ⬜ All text translatable
+
+---
+
+#### ⬜ TASK 25: Authentication System
+**Status**: Not Started
+**File**: [tasks/TASK_25_authentication.md](tasks/TASK_25_authentication.md)
+**Estimated Time**: 10-12 hours
+**Dependencies**: TASK 14 (Backend auth), TASK 18 (Router)
+**Completed**: -
+
+**Deliverables**:
+- [ ] LoginView page
+- [ ] RegisterView page
+- [ ] LoginForm component
+- [ ] RegisterForm component
+- [ ] JWT token management (refresh, expiry)
+- [ ] Protected route guards
+- [ ] User profile page
+- [ ] Logout functionality
+- [ ] Password validation
+- [ ] Error handling
+
+**Success Criteria**:
+- ⬜ Login/register working
+- ⬜ JWT tokens stored securely
+- ⬜ Protected routes working
+- ⬜ Token refresh working
+- ⬜ Logout working
+
+---
+
+#### ⬜ TASK 26: Frontend Testing (Vitest)
+**Status**: Not Started
+**File**: [tasks/TASK_26_frontend_testing.md](tasks/TASK_26_frontend_testing.md)
+**Estimated Time**: 8-10 hours
+**Dependencies**: TASK 25 (All features complete)
+**Completed**: -
+
+**Deliverables**:
+- [ ] Install and configure Vitest
+- [ ] Install Vue Test Utils
+- [ ] Unit tests for components
+- [ ] Unit tests for stores
+- [ ] Unit tests for composables
+- [ ] Mock API calls
+- [ ] Coverage report ≥80%
+
+**Success Criteria**:
+- ⬜ All tests passing
+- ⬜ Coverage ≥80%
+- ⬜ Component tests working
+- ⬜ Store tests working
+
+---
+
+#### ⬜ TASK 27: E2E Testing (Playwright)
+**Status**: Not Started
+**File**: [tasks/TASK_27_e2e_testing.md](tasks/TASK_27_e2e_testing.md)
+**Estimated Time**: 8-10 hours
+**Dependencies**: TASK 26 (Unit tests)
+**Completed**: -
+
+**Deliverables**:
+- [ ] Install and configure Playwright
+- [ ] E2E test: Login → Ask question → View results
+- [ ] E2E test: History navigation
+- [ ] E2E test: Training data management
+- [ ] E2E test: Theme and language switching
+- [ ] Cross-browser testing (Chrome, Firefox, Safari)
+- [ ] CI integration
+
+**Success Criteria**:
+- ⬜ All E2E tests passing
+- ⬜ Cross-browser tests passing
+- ⬜ CI pipeline working
+
+---
+
+#### ⬜ TASK 28: Docker & Production Deployment
+**Status**: Not Started
+**File**: [tasks/TASK_28_docker_deployment.md](tasks/TASK_28_docker_deployment.md)
+**Estimated Time**: 6-8 hours
+**Dependencies**: TASK 27 (All tests passing)
+**Completed**: -
+
+**Deliverables**:
+- [ ] Dockerfile for backend
+- [ ] Dockerfile for frontend (multi-stage with nginx)
+- [ ] Docker Compose production setup
+- [ ] nginx configuration for SPA routing
+- [ ] Environment variables management
+- [ ] CI/CD pipeline (GitHub Actions)
+- [ ] Deployment documentation
+
+**Success Criteria**:
+- ⬜ Backend Docker image builds
+- ⬜ Frontend Docker image builds
+- ⬜ Docker Compose working
+- ⬜ nginx serving frontend correctly
+- ⬜ CI/CD pipeline working
+
+---
+
 ## PROGRESS SUMMARY
 
 ### Overall Status
-- **Total Tasks**: 12
+- **Total Tasks**: 28
 - **Completed**: 12
 - **In Progress**: 0
-- **Not Started**: 0
-- **Overall Progress**: 100% ✅
+- **Not Started**: 16
+- **Overall Progress**: 43% (12/28 tasks completed)
 
 ### Phase Breakdown
 | Phase | Tasks | Status |
@@ -367,9 +764,10 @@ This task master tracks the complete implementation of Detomo SQL AI, a Text-to-
 | Phase 1: Core Backend | TASK 01-02 | ✅ Completed (2/2 completed) |
 | Phase 2: Training Data | TASK 03-04 | ✅ Completed (2/2 completed) |
 | Phase 3: API Layer | TASK 05-07 | ✅ Completed (3/3 completed) |
-| Phase 4: Frontend | TASK 08 | ✅ Completed (1/1 completed) |
+| Phase 4: Frontend (Legacy) | TASK 08 | ✅ Completed (1/1 completed) |
 | Phase 5: Testing & QA | TASK 09-11 | ✅ Completed (3/3 completed) |
 | Phase 6: Documentation | TASK 12 | ✅ Completed (1/1 completed) |
+| Phase 7: Frontend Migration | TASK 13-28 | ⬜ Not Started (0/16 completed) |
 
 ---
 
@@ -409,7 +807,8 @@ TASK 06 (Cache) ──→ TASK 07 (Flask API Extended)
 | Phase 4 | 2-3 days | TASK 08 |
 | Phase 5 | 3-4 days | TASK 09-11 |
 | Phase 6 | 1 day | TASK 12 |
-| **Total** | **11-18 days** | 12 tasks |
+| Phase 7 (Migration) | 15-20 days | TASK 13-28 |
+| **Total (including Phase 7)** | **26-38 days** | 28 tasks |
 
 ---
 
@@ -506,5 +905,38 @@ See `ARCHITECTURE_DECISION.md` for full details.
 
 ---
 
-**Last Updated**: 2025-10-26
+**Last Updated**: 2025-10-27
 **Next Review**: After each task completion
+
+---
+
+## PHASE 7 MIGRATION NOTES
+
+### Architecture Decision (2025-10-27)
+
+**Migration Plan**: Monorepo with Backend Refactor + Vue3 Frontend
+
+**Rationale**:
+- **Separation of concerns**: Clean architecture for backend
+- **Modern frontend**: Vue3 + TypeScript for type safety and better DX
+- **Scalability**: Component-based architecture with Element Plus
+- **State management**: Pinia for centralized state
+- **Routing**: Vue Router for SPA experience
+- **Authentication**: JWT-based secure authentication
+- **Testing**: Comprehensive testing with Vitest and Playwright
+- **Deployment**: Docker-ready production setup
+
+**Benefits**:
+1. Better code organization (monorepo structure)
+2. Type safety with TypeScript
+3. Reusable components with Element Plus
+4. Easier state management with Pinia
+5. Better testing coverage
+6. Production-ready deployment
+
+**Migration Strategy**:
+- Phase 7.1 (TASK 13-14): Project restructure + backend refactor
+- Phase 7.2 (TASK 15-18): Frontend foundation (Vue3, Element Plus, Pinia, Router)
+- Phase 7.3 (TASK 19-22): Core features migration
+- Phase 7.4 (TASK 23-25): Advanced features (training, i18n, auth)
+- Phase 7.5 (TASK 26-28): Testing & deployment
