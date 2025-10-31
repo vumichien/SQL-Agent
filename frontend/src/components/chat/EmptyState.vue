@@ -9,14 +9,11 @@ const emit = defineEmits<{
 
 // Suggested questions in multiple languages
 const suggestions = [
-  { text: 'How many customers are there?', icon: '👥' },
-  { text: 'Show me top 5 best-selling albums', icon: '🎵' },
-  { text: 'What are the total sales by country?', icon: '🌍' },
-  { text: 'List all employees and their titles', icon: '💼' },
-  { text: '顧客数を教えてください', icon: '👥' },
-  { text: 'トップ5のベストセラーアルバムを表示', icon: '🎵' },
-  { text: '国別の総売上を表示してください', icon: '📊' },
-  { text: '従業員とその役職をリストアップ', icon: '💼' }
+  { text: 'How many customers are there?', icon: '' },
+  { text: 'What are the total sales by country?', icon: '' },
+  { text: '顧客数を教えてください', icon: '' },
+  { text: '国別の総売上を表示してください', icon: '' },
+  { text: '従業員とその役職をリストアップ', icon: '' }
 ]
 
 const handleQuestionClick = (question: string) => {
